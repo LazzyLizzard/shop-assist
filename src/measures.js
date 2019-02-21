@@ -6,11 +6,15 @@ export const measures = [
             {
                 itemName: 'Kg',
                 factor: 1,
-                standard: true
+                default: true
             },
             {
                 itemName: 'gram',
                 factor: 1000
+            },
+            {
+                itemName: 'oz',
+                factor: 35.274
             }
         ]
     },
@@ -21,7 +25,7 @@ export const measures = [
             {
                 itemName: 'Liter',
                 factor: 1,
-                standard: true
+                default: true
             },
             {
                 itemName: 'ccm',

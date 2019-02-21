@@ -1,0 +1,25 @@
+.price-item {
+  display: flex;
+  margin-bottom: 20px;
+
+  &__mark {
+    width: 40px;
+  }
+
+  &__price {
+    width: 150px;
+  }
+
+  &__unit {
+    width: 100px;
+  }
+
+  &__quantity {
+    width: 150px;
+  }
+
+  &__result {
+    font-weight: bold;
+    width: 150px;
+  }
+}

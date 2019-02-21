@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {get} from 'lodash';
 import {DEFAULT_DATA} from './initial-values';
-import {PriceItem, MeasuresList} from './components';
+import {PriceItem, MeasuresList, Header} from './components';
 import {formula} from './utils';
 import {measures} from './measures';
 
@@ -51,6 +51,9 @@ export class App extends Component {
     };
 
     componentDidMount() {
+        // this.setState(() => ({
+        //     measure: measureItems.items.find(item => get(item, 'default') === true)
+        // }))
         const m = measures.find(item => item.key === DEFAULT_MEASURE_KEY);
         this.setState(() => {
             return {
@@ -68,6 +71,7 @@ export class App extends Component {
         const {compareData} = this.state;
         return (
             <div>
+                <Header />
                 <div>
                     <MeasuresList measures={measures} />
                 </div>
