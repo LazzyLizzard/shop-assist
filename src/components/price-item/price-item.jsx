@@ -3,6 +3,7 @@ import {get} from 'lodash';
 import {calculatePricePerStandardValue} from '../../utils';
 import {Input} from '../input';
 import {measures} from '../../measures';
+import './price-item.scss'
 
 
 // TODO [sf] 10.02.2019 make component
@@ -21,10 +22,11 @@ const getMeasuresOptions = (measureKey) => {
 
 export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandler, measureKey, measure}) => {
     console.log(props);
-
+    const {standard, itemName} = measure;
     return (
-        <div>
-            <div>
+        <div className="price-item">
+            <div className="price-item__mark" />
+            <div className="price-item__price">
                 <Input
                     placeholder="price"
                     name="price"
@@ -32,6 +34,8 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     index={index}
                     changeHandler={changeHandler}
                 />
+            </div>
+            <div className="price-item__unit">
                 <select
                     name="unit"
                     onChange={(event) => changeHandler(event, index)}
@@ -39,6 +43,8 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     <option value="-">- не выбрано -</option>
                     {getMeasuresOptions(measureKey)}
                 </select>
+            </div>
+            <div className="price-item__quantity">
                 <Input
                     placeholder="к-во"
                     name="quantity"
@@ -46,12 +52,16 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     index={index}
                     changeHandler={changeHandler}
                 />
-                {/*<Input name="result" value={props.result} disabled />*/}
+            </div>
+            <div className="price-item__result">
                 v: {
                 calculatePricePerStandardValue({
                     ...props,
-                    standard: measure.standard
+                    standard,
+                    per: itemName
                 })}
+            </div>
+            <div className="price-item__button">
                 {allowDelete &&
                 <button
                     type="button"
