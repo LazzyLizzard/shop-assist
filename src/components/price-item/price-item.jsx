@@ -21,7 +21,7 @@ const getMeasuresOptions = (measureKey) => {
 };
 
 export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandler, measureKey, measure}) => {
-    console.log(props);
+    console.log('----');
     const {standard, itemName} = measure;
     return (
         <div className="price-item">
@@ -59,7 +59,7 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     ...props,
                     standard,
                     per: itemName
-                })}
+                })} [{props.x}]
             </div>
             <div className="price-item__button">
                 {allowDelete &&

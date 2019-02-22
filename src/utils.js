@@ -8,7 +8,7 @@ export const formula = (values) => {
 };
 
 export const calculatePricePerStandardValue = ({unit, standard, price, quantity, per}) => {
-    // console.log('>>> u %s, s %s, p %s, q %s', unit, standard, price, quantity);
+    console.log('>>> u %s, s %s, p %s, q %s', unit, standard, price, quantity);
 
     // 1000/цена * вес в граммах
 

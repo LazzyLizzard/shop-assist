@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {get} from 'lodash';
 import {DEFAULT_DATA} from './initial-values';
-import {PriceItem, MeasuresList, Header} from './components';
+import {Header, MeasuresList, PriceItem} from './components';
 import {formula} from './utils';
 import {measures} from './measures';
 
@@ -37,6 +36,14 @@ export class App extends Component {
 
     };
 
+    setRes = (data) => {
+        this.setState(() => {
+            return {
+                compareData: data
+            }
+        })
+    };
+
     changeHandler = (event, index) => {
         const {name, value} = event.target;
         this.setState((state) => {
@@ -45,10 +52,33 @@ export class App extends Component {
             compareData[index] = {
                 ...compareData[index],
                 [name]: value
+                // x: calculatePricePerStandardValue({
+                //     unit: state.compareData[index].unit,
+                //     standard: '1',
+                //     price: state.compareData[index].price,
+                //     quantity: state.compareData[index].quantity,
+                //     per: 'aaa'
+                // })
             };
             return {compareData};
+        }, (state) => {
+            console.log('cb');
+            console.log(state);
+            // const {compareData} = state;
+            // compareData[index] = {
+            //     ...compareData[index],
+            //     r: calculatePricePerStandardValue({
+            //         unit: compareData[index].unit,
+            //         standard: '1',
+            //         price: compareData[index].price,
+            //         quantity: compareData[index].quantity,
+            //         per: 'aaa'
+            //     })
+            // };
+            // this.setRes(compareData)
         })
     };
+
 
     componentDidMount() {
         // this.setState(() => ({
