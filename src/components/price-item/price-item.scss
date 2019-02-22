@@ -1,28 +1,38 @@
+@mixin cell-padding() {
+  padding: 0 10px 0 10px;
+}
+
 .price-item {
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   &__mark {
     width: 40px;
+    @include cell-padding();
   }
 
   &__price {
     width: 150px;
+    @include cell-padding();
   }
 
   &__unit {
     width: 100px;
+    @include cell-padding();
   }
 
   &__quantity {
     width: 150px;
+    @include cell-padding();
   }
 
   &__result {
+    @include cell-padding();
     font-weight: bold;
     width: 150px;
   }
   &__button {
+    @include cell-padding();
     width: 100px;
   }
 }

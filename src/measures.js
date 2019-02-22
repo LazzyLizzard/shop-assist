@@ -32,6 +32,5 @@ export const measures = [
                 factor: 1000
             }
         ]
-
     }
 ];

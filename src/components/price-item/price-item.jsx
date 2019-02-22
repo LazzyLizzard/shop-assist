@@ -21,22 +21,23 @@ const getMeasuresOptions = (measureKey) => {
 };
 
 export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandler, measureKey, measure}) => {
-    console.log('----');
+    console.log(props);
     const {standard, itemName} = measure;
     return (
         <div className="price-item">
             <div className="price-item__mark" />
-            <div className="price-item__price">
+            <div className="price-item__quantity">
                 <Input
-                    placeholder="price"
-                    name="price"
-                    value={props.price}
+                    placeholder="к-во"
+                    name="quantity"
+                    value={props.units}
                     index={index}
                     changeHandler={changeHandler}
                 />
             </div>
             <div className="price-item__unit">
                 <select
+                    style={{width: '100%'}}
                     name="unit"
                     onChange={(event) => changeHandler(event, index)}
                 >
@@ -44,11 +45,11 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     {getMeasuresOptions(measureKey)}
                 </select>
             </div>
-            <div className="price-item__quantity">
+            <div className="price-item__price">
                 <Input
-                    placeholder="к-во"
-                    name="quantity"
-                    value={props.units}
+                    placeholder="price"
+                    name="price"
+                    value={props.price}
                     index={index}
                     changeHandler={changeHandler}
                 />
@@ -59,7 +60,8 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     ...props,
                     standard,
                     per: itemName
-                })} [{props.x}]
+                })}
+                [{props.r}]
             </div>
             <div className="price-item__button">
                 {allowDelete &&
