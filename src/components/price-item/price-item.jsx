@@ -1,8 +1,7 @@
 import React from 'react';
 import {get} from 'lodash';
-import {calculatePricePerStandardValue} from '../../utils';
 import {Input} from '../input';
-import {measures} from '../../measures';
+import {measures} from '../../constants/measures';
 import './price-item.scss'
 
 
@@ -20,12 +19,13 @@ const getMeasuresOptions = (measureKey) => {
         ))
 };
 
-export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandler, measureKey, measure}) => {
-    console.log(props);
-    const {standard, itemName} = measure;
+export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandler, measureKey, measure, bestValues}) => {
+    const {itemName} = measure;
     return (
         <div className="price-item">
-            <div className="price-item__mark" />
+            <div className="price-item__mark">
+                {bestValues.includes(index) && <div>**</div>}
+            </div>
             <div className="price-item__quantity">
                 <Input
                     placeholder="к-во"
@@ -55,13 +55,7 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                 />
             </div>
             <div className="price-item__result">
-                v: {
-                calculatePricePerStandardValue({
-                    ...props,
-                    standard,
-                    per: itemName
-                })}
-                [{props.r}]
+                {props.r} RUB/{itemName}
             </div>
             <div className="price-item__button">
                 {allowDelete &&

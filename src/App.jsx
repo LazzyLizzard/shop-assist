@@ -1,26 +1,30 @@
 import React, {Component} from 'react';
-import {DEFAULT_DATA} from './initial-values';
+import {isEqual} from 'lodash';
+import {DEFAULT_DATA} from './constants/initial-values';
+import {measures} from './constants/measures';
+import {BEST_VALUES_INDEXES, COMPARE_DATA} from './constants/field-names';
 import {Header, MeasuresList, PriceItem} from './components';
-import {formula, calculatePricePerStandardValue} from './utils';
-import {measures} from './measures';
+import {calculatePricePerStandardValue, formula} from './utils';
+
 
 const MAX_ITEMS = 10;
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
 
 export class App extends Component {
     state = {
-        compareData: [DEFAULT_DATA],
+        [COMPARE_DATA]: [DEFAULT_DATA],
         measure: {
             name: null,
             standard: null,
             itemName: null
-        }
+        },
+        [BEST_VALUES_INDEXES]: []
     };
 
     addItem = () => this.setState((state) => {
         return {
-            compareData: [
-                ...state.compareData,
+            [COMPARE_DATA]: [
+                ...state[COMPARE_DATA],
                 DEFAULT_DATA,
             ]
         }
@@ -38,30 +42,57 @@ export class App extends Component {
 
     changeHandler = (event, index) => {
         const {name, value} = event.target;
-        this.setState((state) => {
-            const {compareData} = state;
+        this.setState(({compareData}) => {
             // https://stackoverflow.com/a/49502115
-            compareData[index] = {
-                ...compareData[index],
-                [name]: value
-            };
-            return {compareData};
+            // shallow copies
+            // const {compareData} = state;    // array of objects
+            const item = {...compareData[index]};    // object
+            item[name] = value;
+
+            // compareData[index] = item;
+            // compareData[index] = {
+            //     ...compareData[index],
+            //     [name]: value
+            // };
+            // return {compareData: [
+            //         ...compareData,
+            //         ...[index][name] = value
+            //     ]};
+            return {
+                compareData: [
+
+                ]
+
+            }
         }, () => {
             const {compareData} = this.state;
-            compareData[index] = {
-                ...compareData[index],
-                r: calculatePricePerStandardValue({
-                    unit: compareData[index].unit,
-                    standard: this.state.measure.standard,
-                    price: compareData[index].price,
-                    quantity: compareData[index].quantity,
-                    per: 'aaa'
-                })
-            };
-            this.setState(() => ({
-                compareData
-            }))
-            // this.setRes(compareData)
+            const item = {...compareData[index]};    // object
+            item.r = calculatePricePerStandardValue({
+                unit: item.unit,
+                standard: this.state.measure.standard,
+                price: item.price,
+                quantity: item.quantity,
+                per: this.state.measure.itemName
+            });
+            compareData[index] = item;
+            // compareData[index] = {
+            //     ...compareData[index],
+            //     r: calculatePricePerStandardValue({
+            //         unit: compareData[index].unit,
+            //         standard: this.state.measure.standard,
+            //         price: compareData[index].price,
+            //         quantity: compareData[index].quantity,
+            //         per: this.state.measure.itemName
+            //     })
+            // };
+            // this.setState(() => {
+            //     return {compareData}
+            // }
+            //     // , () => {
+            //     //     console.log('cb')
+            //     // }
+            // )
+            this.setState({compareData});
         })
     };
 
@@ -83,8 +114,19 @@ export class App extends Component {
 
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        console.log('t', this.state[COMPARE_DATA], 'p', prevState[COMPARE_DATA]);
+        console.log('CDU');
+        if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
+            console.log('AAA');
+            this.setState(() => ({[BEST_VALUES_INDEXES]: []}))
+        }
+    }
+
+
     render() {
         const {compareData} = this.state;
+        console.log(compareData);
         return (
             <div>
                 <Header />
@@ -103,25 +145,33 @@ export class App extends Component {
                 <div>
                     {/* TODO [sf] 03.02.2019 use other key */}
                     {
-                        compareData.map((item, index) => {
-                                // console.log(item);
-                                return (
-                                    <PriceItem
-                                        key={index}
-                                        props={item}
-                                        index={index}
-                                        changeHandler={this.changeHandler}
-                                        allowDelete={compareData.length > 1}
-                                        removeHandler={this.removeItem}
-                                        measureKey={DEFAULT_MEASURE_KEY}
-                                        measure={this.state.measure}
-                                    />)
-                            }
+                        compareData.map((item, index) =>
+                            (
+                                <PriceItem
+                                    key={index}
+                                    props={item}
+                                    index={index}
+                                    changeHandler={this.changeHandler}
+                                    allowDelete={compareData.length > 1}
+                                    removeHandler={this.removeItem}
+                                    measureKey={DEFAULT_MEASURE_KEY}
+                                    measure={this.state.measure}
+                                    bestValues={this.state[BEST_VALUES_INDEXES]}
+                                />)
                         )
                     }
                 </div>
                 <div>
-                    <button type="button" onClick={() => formula(compareData)}>Compare</button>
+                    <button
+                        type="button"
+                        onClick={() => this.setState(() => {
+                            return {
+                                [BEST_VALUES_INDEXES]: formula(compareData)
+                            }
+                        })}
+                    >
+                        Compare
+                    </button>
                 </div>
             </div>
         );
