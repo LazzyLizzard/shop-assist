@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {isEqual} from 'lodash';
+import {get, isEqual} from 'lodash';
 import {DEFAULT_DATA} from './constants/initial-values';
 import {measures} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA} from './constants/field-names';
@@ -45,54 +45,40 @@ export class App extends Component {
         this.setState(({compareData}) => {
             // https://stackoverflow.com/a/49502115
             // shallow copies
-            // const {compareData} = state;    // array of objects
-            const item = {...compareData[index]};    // object
-            item[name] = value;
-
-            // compareData[index] = item;
-            // compareData[index] = {
-            //     ...compareData[index],
-            //     [name]: value
-            // };
-            // return {compareData: [
-            //         ...compareData,
-            //         ...[index][name] = value
-            //     ]};
+            const item = get(compareData, `[${index}]`, {});    // object
             return {
                 compareData: [
-
+                    ...compareData.slice(0, index),
+                    {
+                        ...item,
+                        [name]: value
+                    },
+                    ...compareData.slice(index + 1, compareData.length)
                 ]
-
             }
         }, () => {
             const {compareData} = this.state;
-            const item = {...compareData[index]};    // object
-            item.r = calculatePricePerStandardValue({
-                unit: item.unit,
+            const item = get(compareData, `[${index}]`, {});    // object
+            const r = calculatePricePerStandardValue({
+                unit: compareData[index].unit,
                 standard: this.state.measure.standard,
-                price: item.price,
-                quantity: item.quantity,
+                price: compareData[index].price,
+                quantity: compareData[index].quantity,
                 per: this.state.measure.itemName
             });
-            compareData[index] = item;
-            // compareData[index] = {
-            //     ...compareData[index],
-            //     r: calculatePricePerStandardValue({
-            //         unit: compareData[index].unit,
-            //         standard: this.state.measure.standard,
-            //         price: compareData[index].price,
-            //         quantity: compareData[index].quantity,
-            //         per: this.state.measure.itemName
-            //     })
-            // };
-            // this.setState(() => {
-            //     return {compareData}
-            // }
-            //     // , () => {
-            //     //     console.log('cb')
-            //     // }
-            // )
-            this.setState({compareData});
+
+            this.setState(() => {
+                return {
+                    compareData: [
+                        ...compareData.slice(0, index),
+                        {
+                            ...item,
+                            r
+                        },
+                        ...compareData.slice(index + 1, compareData.length)
+                    ]
+                }
+            });
         })
     };
 
