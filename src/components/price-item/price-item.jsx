@@ -30,6 +30,7 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
             <Grid item xs={6} sm={2}>
                 <Input
                     placeholder="к-во"
+                    label="qty"
                     name="quantity"
                     value={props.units}
                     index={index}
