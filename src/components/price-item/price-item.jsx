@@ -1,9 +1,9 @@
 import React from 'react';
 import {get} from 'lodash';
+import Grid from '@material-ui/core/Grid';
 import {Input} from '../input';
 import {measures} from '../../constants/measures';
-import './price-item.scss'
-
+// import './price-item.scss'
 
 // TODO [sf] 10.02.2019 make component
 const getMeasuresOptions = (measureKey) => {
@@ -22,11 +22,12 @@ const getMeasuresOptions = (measureKey) => {
 export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandler, measureKey, measure, bestValues}) => {
     const {itemName} = measure;
     return (
-        <div className="price-item">
-            <div className="price-item__mark">
+        <Grid container spacing={24} style={{padding: '0 20px'}}>
+            <Grid item xs={1} sm={1} xl={1}>
                 {bestValues.includes(index) && <div>**</div>}
-            </div>
-            <div className="price-item__quantity">
+            </Grid>
+
+            <Grid item xs={6} sm={2}>
                 <Input
                     placeholder="к-во"
                     name="quantity"
@@ -34,8 +35,8 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     index={index}
                     changeHandler={changeHandler}
                 />
-            </div>
-            <div className="price-item__unit">
+            </Grid>
+            <Grid item xs={3} sm={2}>
                 <select
                     style={{width: '100%'}}
                     name="unit"
@@ -44,8 +45,8 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     <option value="-">- не выбрано -</option>
                     {getMeasuresOptions(measureKey)}
                 </select>
-            </div>
-            <div className="price-item__price">
+            </Grid>
+            <Grid item xs={3} sm={2}>
                 <Input
                     placeholder="price"
                     name="price"
@@ -53,11 +54,11 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     index={index}
                     changeHandler={changeHandler}
                 />
-            </div>
-            <div className="price-item__result">
+            </Grid>
+            <Grid item xs={3} sm={2}>
                 {props.r} RUB/{itemName}
-            </div>
-            <div className="price-item__button">
+            </Grid>
+            <Grid item xs={3} sm={2}>
                 {allowDelete &&
                 <button
                     type="button"
@@ -68,7 +69,7 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                     X
                 </button>
                 }
-            </div>
-        </div>
+            </Grid>
+        </Grid>
     )
 };

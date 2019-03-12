@@ -1,12 +1,11 @@
 import React from 'react';
+import TextField from '@material-ui/core/TextField';
 
 export const Input = ({changeHandler, index, ...rest}) => {
     return (
-        <input
-            type="text"
-            autoComplete="off"
+        <TextField
             onChange={(event) => changeHandler(event, index)}
-            style={{width: '100%'}}
+            margin="normal"
             {...rest}
         />
     )

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
+import Grid from '@material-ui/core/Grid';
 import {DEFAULT_DATA} from './constants/initial-values';
 import {measures} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA} from './constants/field-names';
@@ -82,7 +83,6 @@ export class App extends Component {
         })
     };
 
-
     componentDidMount() {
         // this.setState(() => ({
         //     measure: measureItems.items.find(item => get(item, 'default') === true)
@@ -97,7 +97,6 @@ export class App extends Component {
                 }
             }
         })
-
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -114,52 +113,60 @@ export class App extends Component {
         const {compareData} = this.state;
         console.log(compareData);
         return (
-            <div>
-                <Header />
-                <div>
-                    <MeasuresList measures={measures} />
-                </div>
-                <div>
-                    now: {compareData.length},
-                    <button
-                        type="button"
-                        disabled={compareData.length >= MAX_ITEMS}
-                        onClick={this.addItem}>
-                        Add (max. {MAX_ITEMS})
-                    </button>
-                </div>
-                <div>
-                    {/* TODO [sf] 03.02.2019 use other key */}
-                    {
-                        compareData.map((item, index) =>
-                            (
-                                <PriceItem
-                                    key={index}
-                                    props={item}
-                                    index={index}
-                                    changeHandler={this.changeHandler}
-                                    allowDelete={compareData.length > 1}
-                                    removeHandler={this.removeItem}
-                                    measureKey={DEFAULT_MEASURE_KEY}
-                                    measure={this.state.measure}
-                                    bestValues={this.state[BEST_VALUES_INDEXES]}
-                                />)
-                        )
-                    }
-                </div>
-                <div>
-                    <button
-                        type="button"
-                        onClick={() => this.setState(() => {
-                            return {
-                                [BEST_VALUES_INDEXES]: formula(compareData)
-                            }
-                        })}
-                    >
-                        Compare
-                    </button>
-                </div>
-            </div>
+            <React.Fragment>
+                <Grid container spacing={24}>
+                    <Grid item xs={12}>
+                        <Header />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={24}>
+                    <Grid item xs={12}>
+                        <MeasuresList measures={measures} />
+                    </Grid>
+                    <div>
+                        now: {compareData.length},
+                        <button
+                            type="button"
+                            disabled={compareData.length >= MAX_ITEMS}
+                            onClick={this.addItem}>
+                            Add (max. {MAX_ITEMS})
+                        </button>
+                    </div>
+                </Grid>
+
+                {/* TODO [sf] 03.02.2019 use other key */}
+                {
+                    compareData.map((item, index) =>
+                        (
+                            <PriceItem
+                                key={index}
+                                props={item}
+                                index={index}
+                                changeHandler={this.changeHandler}
+                                allowDelete={compareData.length > 1}
+                                removeHandler={this.removeItem}
+                                measureKey={DEFAULT_MEASURE_KEY}
+                                measure={this.state.measure}
+                                bestValues={this.state[BEST_VALUES_INDEXES]}
+                            />)
+                    )
+                }
+
+                <Grid container spacing={24}>
+                    <Grid item>
+                        <button
+                            type="button"
+                            onClick={() => this.setState(() => {
+                                return {
+                                    [BEST_VALUES_INDEXES]: formula(compareData)
+                                }
+                            })}
+                        >
+                            Compare
+                        </button>
+                    </Grid>
+                </Grid>
+            </React.Fragment>
         );
     }
 }
