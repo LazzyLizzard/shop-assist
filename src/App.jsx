@@ -104,6 +104,7 @@ export class App extends Component {
         console.log('CDU');
         if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
             console.log('AAA');
+            // TODO [sf] 12.03.2019 use debounce https://stackoverflow.com/a/48046243/3042031
             this.setState(() => ({[BEST_VALUES_INDEXES]: []}))
         }
     }
