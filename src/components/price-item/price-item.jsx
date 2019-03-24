@@ -5,6 +5,8 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import {Input} from '../input';
 import {measures} from '../../constants/measures';
 // import './price-item.scss'
@@ -25,6 +27,16 @@ const getMeasuresOptions = (measureKey) => {
 
 export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandler, measureKey, measure, bestValues}) => {
     const {itemName} = measure;
+    const fff = () => {
+        const p = {
+            padding: '0 20px'
+        };
+        return {
+            ...p,
+            ...bestValues.includes(index) ? {background: '#CAFFCA'} : {}
+        }
+
+    };
     return (
         <Grid
             container
@@ -32,12 +44,8 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
             direction="row"
             justify="flex-start"
             alignItems="flex-start"
-            style={{padding: '0 40px'}}
+            style={fff()}
         >
-            <Grid item xs={1} sm={1} xl={1}>
-                {bestValues.includes(index) && <div>**</div>}
-            </Grid>
-
             <Grid item xs={6} sm={2}>
                 <Input
                     placeholder="к-во"
@@ -78,18 +86,28 @@ export const PriceItem = ({props, index, changeHandler, allowDelete, removeHandl
                 />
             </Grid>
             <Grid item xs={3} sm={2}>
-                {props.r} RUB/{itemName}
+
+                <TextField
+                    disabled
+                    id="r"
+                    label={`RUB/${itemName}`}
+                    defaultValue="-"
+                    value={props.r}
+                />
+
             </Grid>
             <Grid item xs={3} sm={2}>
                 {allowDelete &&
-                <button
+                <Button
                     type="button"
+                    color="secondary"
+                    variant="contained"
                     onClick={() => {
                         removeHandler(index)
                     }}
                 >
-                    X
-                </button>
+                    Delete
+                </Button>
                 }
             </Grid>
         </Grid>

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
 import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 import {DEFAULT_DATA} from './constants/initial-values';
 import {measures} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA} from './constants/field-names';
@@ -121,18 +122,18 @@ export class App extends Component {
                     </Grid>
                 </Grid>
                 <Grid container spacing={24}>
+                    {/*<Grid item xs={12}>*/}
+                        {/*<MeasuresList measures={measures} />*/}
+                    {/*</Grid>*/}
                     <Grid item xs={12}>
-                        <MeasuresList measures={measures} />
-                    </Grid>
-                    <div>
-                        now: {compareData.length},
-                        <button
+                        <Button
                             type="button"
+                            variant="contained"
                             disabled={compareData.length >= MAX_ITEMS}
                             onClick={this.addItem}>
-                            Add (max. {MAX_ITEMS})
-                        </button>
-                    </div>
+                            Add (max. {MAX_ITEMS}), now {compareData.length}
+                        </Button>
+                    </Grid>>
                 </Grid>
 
                 {/* TODO [sf] 03.02.2019 use other key */}
@@ -155,8 +156,11 @@ export class App extends Component {
 
                 <Grid container spacing={24}>
                     <Grid item>
-                        <button
+                        <Button
+                            size="large"
                             type="button"
+                            color="primary"
+                            variant="contained"
                             onClick={() => this.setState(() => {
                                 return {
                                     [BEST_VALUES_INDEXES]: formula(compareData)
@@ -164,7 +168,7 @@ export class App extends Component {
                             })}
                         >
                             Compare
-                        </button>
+                        </Button>
                     </Grid>
                 </Grid>
             </React.Fragment>
