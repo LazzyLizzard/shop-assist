@@ -106,24 +106,21 @@ export class App extends Component {
         if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
             console.log('AAA');
             // TODO [sf] 12.03.2019 use debounce https://stackoverflow.com/a/48046243/3042031
-            this.setState(() => ({[BEST_VALUES_INDEXES]: []}))
+            this.setState(() => ({
+                [BEST_VALUES_INDEXES]: []
+            }))
         }
     }
 
-
     render() {
-        const {compareData} = this.state;
+        const {compareData, measure} = this.state;
         console.log(compareData);
         return (
             <React.Fragment>
-                <Grid container spacing={24}>
-                    <Grid item xs={12}>
-                        <Header />
-                    </Grid>
-                </Grid>
+                <Header />
                 <Grid container spacing={24}>
                     {/*<Grid item xs={12}>*/}
-                        {/*<MeasuresList measures={measures} />*/}
+                    {/*<MeasuresList measures={measures} />*/}
                     {/*</Grid>*/}
                     <Grid item xs={12}>
                         <Button
@@ -137,22 +134,16 @@ export class App extends Component {
                 </Grid>
 
                 {/* TODO [sf] 03.02.2019 use other key */}
-                {
-                    compareData.map((item, index) =>
-                        (
-                            <PriceItem
-                                key={index}
-                                props={item}
-                                index={index}
-                                changeHandler={this.changeHandler}
-                                allowDelete={compareData.length > 1}
-                                removeHandler={this.removeItem}
-                                measureKey={DEFAULT_MEASURE_KEY}
-                                measure={this.state.measure}
-                                bestValues={this.state[BEST_VALUES_INDEXES]}
-                            />)
-                    )
-                }
+
+                <PriceItem
+                    compareData={compareData}
+                    changeHandler={this.changeHandler}
+                    allowDelete={compareData.length > 1}
+                    removeHandler={this.removeItem}
+                    measureKey={DEFAULT_MEASURE_KEY}
+                    measure={measure}
+                    bestValues={this.state[BEST_VALUES_INDEXES]}
+                />
 
                 <Grid container spacing={24}>
                     <Grid item>
@@ -161,11 +152,9 @@ export class App extends Component {
                             type="button"
                             color="primary"
                             variant="contained"
-                            onClick={() => this.setState(() => {
-                                return {
-                                    [BEST_VALUES_INDEXES]: formula(compareData)
-                                }
-                            })}
+                            onClick={() => this.setState(() => ({
+                                [BEST_VALUES_INDEXES]: formula(compareData)
+                            }))}
                         >
                             Compare
                         </Button>
