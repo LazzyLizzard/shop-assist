@@ -1,5 +1,8 @@
 import React from 'react';
 
-export const MeasuresList = ({measures}) => measures.map(item => (
-    <span style={{margin: '0 20px 0 0'}}>{item.name}</span>
+export const MeasuresList = ({measures, keyWord}) => measures.map(item => (
+    <span style={{
+        ...{marginRight: '20px'},
+        ...item.key === keyWord ? {fontWeight: 'bold'} : {}
+    }}>{item.name}</span>
 ));

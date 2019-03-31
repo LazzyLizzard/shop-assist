@@ -11,24 +11,27 @@ import {Input} from '../../components';
 import {measures} from '../../constants/measures';
 
 // TODO [sf] 10.02.2019 make component
-const getMeasuresOptions = (measureKey) => {
+const getMeasuresOptions = (measureKey, addEmpty) => {
     const itemsGroup = measures.find(measureItemGroup => measureItemGroup.key === measureKey);
-    return get(itemsGroup, 'items', []).map(measureItem =>
-        (
-            <MenuItem
-                key={measureItem.itemName}
-                value={measureItem.factor}
-            >
-                {measureItem.itemName} ({measureItem.factor})
-            </MenuItem>
-        ))
+    return [
+        ...addEmpty ? [<MenuItem value="-">- не выбрано -</MenuItem>] : [],
+        ...get(itemsGroup, 'items', []).map(measureItem =>
+            (
+                <MenuItem
+                    key={measureItem.itemName}
+                    value={measureItem.factor}
+                >
+                    {measureItem.itemName} ({measureItem.factor})
+                </MenuItem>
+            ))
+    ]
 };
 
 export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandler, measureKey, measure, bestValues}) => {
     const {itemName} = measure;
     const setStyles = (index) => ({
         ...{
-            padding: '0 20px'
+            padding: 'none'
         },
         ...bestValues.includes(index) ? {background: '#CAFFCA'} : {}
     });
@@ -36,7 +39,7 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
         compareData.map((item, index) => (
             <Grid
                 container
-                spacing={24}
+                spacing={16}
                 direction="row"
                 justify="flex-start"
                 alignItems="flex-start"
@@ -66,8 +69,7 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
                                 id: 'unit'
                             }}
                         >
-                            <MenuItem value="-">- не выбрано -</MenuItem>
-                            {getMeasuresOptions(measureKey)}
+                            {getMeasuresOptions(measureKey, true)}
                         </Select>
                     </FormControl>
                 </Grid>
@@ -82,15 +84,14 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
                     />
                 </Grid>
                 <Grid item xs={3} sm={2}>
-
                     <TextField
                         disabled
+                        style={{fontWeight: 'bold'}}
                         id="r"
                         label={`RUB/${itemName}`}
                         defaultValue="-"
                         value={item.r}
                     />
-
                 </Grid>
                 <Grid item xs={3} sm={2}>
                     {allowDelete &&

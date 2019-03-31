@@ -8,9 +8,19 @@ import {BEST_VALUES_INDEXES, COMPARE_DATA} from './constants/field-names';
 import {Header, MeasuresList, PriceItem} from './components';
 import {calculatePricePerStandardValue, formula} from './utils';
 
-
 const MAX_ITEMS = 10;
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
+
+const setMeasure = (measureKey) => {
+    const measureObject = measures.find(object => object.key === measureKey);
+    const measureItem = measureObject.items.find(item => get(item, 'default') === true);
+    return {
+        keyWord: measureObject.key,
+        name: measureObject.name,
+        standard: measureItem.factor,
+        itemName: measureItem.itemName
+    }
+};
 
 export class App extends Component {
     state = {
@@ -85,17 +95,9 @@ export class App extends Component {
     };
 
     componentDidMount() {
-        // this.setState(() => ({
-        //     measure: measureItems.items.find(item => get(item, 'default') === true)
-        // }))
-        const m = measures.find(item => item.key === DEFAULT_MEASURE_KEY);
         this.setState(() => {
             return {
-                measure: {
-                    name: m.name,
-                    standard: m.items[0].factor,
-                    itemName: m.items[0].itemName
-                }
+                measure: setMeasure(DEFAULT_MEASURE_KEY)
             }
         })
     }
@@ -104,7 +106,6 @@ export class App extends Component {
         console.log('t', this.state[COMPARE_DATA], 'p', prevState[COMPARE_DATA]);
         console.log('CDU');
         if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
-            console.log('AAA');
             // TODO [sf] 12.03.2019 use debounce https://stackoverflow.com/a/48046243/3042031
             this.setState(() => ({
                 [BEST_VALUES_INDEXES]: []
@@ -114,15 +115,19 @@ export class App extends Component {
 
     render() {
         const {compareData, measure} = this.state;
-        console.log(compareData);
         return (
             <React.Fragment>
-                <Header />
-                <Grid container spacing={24}>
-                    {/*<Grid item xs={12}>*/}
-                    {/*<MeasuresList measures={measures} />*/}
-                    {/*</Grid>*/}
-                    <Grid item xs={12}>
+                <Header
+                    measureText={measure.name}
+                />
+                <Grid container spacing={16}>
+                    <Grid item xs={6}>
+                    <MeasuresList
+                        measures={measures}
+                        keyWord={measure.keyWord}
+                    />
+                    </Grid>
+                    <Grid item xs={6}>
                         <Button
                             type="button"
                             variant="contained"
@@ -130,7 +135,7 @@ export class App extends Component {
                             onClick={this.addItem}>
                             Add (max. {MAX_ITEMS}), now {compareData.length}
                         </Button>
-                    </Grid>>
+                    </Grid>
                 </Grid>
 
                 {/* TODO [sf] 03.02.2019 use other key */}
@@ -145,8 +150,8 @@ export class App extends Component {
                     bestValues={this.state[BEST_VALUES_INDEXES]}
                 />
 
-                <Grid container spacing={24}>
-                    <Grid item>
+                <Grid container spacing={16}>
+                    <Grid item xs={12}>
                         <Button
                             size="large"
                             type="button"
