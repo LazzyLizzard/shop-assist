@@ -1,6 +1,7 @@
-export const DEFAULT_DATA = {
+export const buildDefaultData = () => ({
     unit: '',
     price: '',
     quantity: '',
-    result: '-'
-};
+    r: '-',
+    key: Date.now()
+});

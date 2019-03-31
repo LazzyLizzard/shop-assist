@@ -14,7 +14,7 @@ import {measures} from '../../constants/measures';
 const getMeasuresOptions = (measureKey, addEmpty) => {
     const itemsGroup = measures.find(measureItemGroup => measureItemGroup.key === measureKey);
     return [
-        ...addEmpty ? [<MenuItem value="-">- не выбрано -</MenuItem>] : [],
+        ...addEmpty ? [<MenuItem value="-" key={'-'}>- не выбрано -</MenuItem>] : [],
         ...get(itemsGroup, 'items', []).map(measureItem =>
             (
                 <MenuItem
@@ -44,13 +44,14 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
                 justify="flex-start"
                 alignItems="flex-start"
                 style={setStyles(index)}
+                key={item.key}
             >
                 <Grid item xs={6} sm={2}>
                     <Input
                         placeholder="к-во"
                         label="qty"
                         name="quantity"
-                        value={item.units}
+                        value={item.quantity}
                         index={index}
                         changeHandler={changeHandler}
                     />
@@ -59,7 +60,6 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
                     <FormControl>
                         <InputLabel htmlFor="unit">Unit</InputLabel>
                         <Select
-                            margin="normal"
                             placeholder="measure"
                             label="Unit"
                             value={item.unit}
@@ -84,12 +84,12 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
                     />
                 </Grid>
                 <Grid item xs={3} sm={2}>
+
                     <TextField
                         disabled
                         style={{fontWeight: 'bold'}}
                         id="r"
                         label={`RUB/${itemName}`}
-                        defaultValue="-"
                         value={item.r}
                     />
                 </Grid>
@@ -103,7 +103,7 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
                             removeHandler(index)
                         }}
                     >
-                        Delete
+                        Delete {index}
                     </Button>
                     }
                 </Grid>

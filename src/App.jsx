@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {get, isEqual} from 'lodash';
+import {get, isEqual, noop} from 'lodash';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import {DEFAULT_DATA} from './constants/initial-values';
+import {buildDefaultData} from './constants/initial-values';
 import {measures} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA} from './constants/field-names';
-import {Header, MeasuresList, PriceItem} from './components';
+import {CommonWrapper, Header, MeasuresList, PriceItem} from './components';
 import {calculatePricePerStandardValue, formula} from './utils';
 
 const MAX_ITEMS = 10;
@@ -24,7 +24,7 @@ const setMeasure = (measureKey) => {
 
 export class App extends Component {
     state = {
-        [COMPARE_DATA]: [DEFAULT_DATA],
+        [COMPARE_DATA]: [buildDefaultData()],
         measure: {
             name: null,
             standard: null,
@@ -37,7 +37,7 @@ export class App extends Component {
         return {
             [COMPARE_DATA]: [
                 ...state[COMPARE_DATA],
-                DEFAULT_DATA,
+                buildDefaultData(),
             ]
         }
     });
@@ -50,6 +50,15 @@ export class App extends Component {
             }
         });
 
+    };
+
+    changeMeasureHandler = (measureKey) => {
+        this.setState(() => {
+            return {
+                measure: setMeasure(measureKey)
+            }
+        });
+        console.log('changeMeasureHandler', measureKey);
     };
 
     changeHandler = (event, index) => {
@@ -120,51 +129,55 @@ export class App extends Component {
                 <Header
                     measureText={measure.name}
                 />
-                <Grid container spacing={16}>
-                    <Grid item xs={6}>
-                    <MeasuresList
-                        measures={measures}
-                        keyWord={measure.keyWord}
+                <CommonWrapper>
+                    <Grid container spacing={16}>
+                        <Grid item xs={6}>
+                            <MeasuresList
+                                measures={measures}
+                                keyWord={measure.keyWord}
+                                changeMeasureHandler={this.changeMeasureHandler}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Button
+                                type="button"
+                                variant="contained"
+                                disabled={compareData.length >= MAX_ITEMS}
+                                onClick={this.addItem}>
+                                Add (max. {MAX_ITEMS}), now {compareData.length}
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+
+                    {/*/!* TODO [sf] 03.02.2019 use other key *!/*/}
+
+                    <PriceItem
+                        compareData={compareData}
+                        changeHandler={this.changeHandler}
+                        allowDelete={compareData.length > 1}
+                        removeHandler={this.removeItem}
+                        measureKey={measure.keyWord}
+                        measure={measure}
+                        bestValues={this.state[BEST_VALUES_INDEXES]}
                     />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Button
-                            type="button"
-                            variant="contained"
-                            disabled={compareData.length >= MAX_ITEMS}
-                            onClick={this.addItem}>
-                            Add (max. {MAX_ITEMS}), now {compareData.length}
-                        </Button>
-                    </Grid>
-                </Grid>
 
-                {/* TODO [sf] 03.02.2019 use other key */}
-
-                <PriceItem
-                    compareData={compareData}
-                    changeHandler={this.changeHandler}
-                    allowDelete={compareData.length > 1}
-                    removeHandler={this.removeItem}
-                    measureKey={DEFAULT_MEASURE_KEY}
-                    measure={measure}
-                    bestValues={this.state[BEST_VALUES_INDEXES]}
-                />
-
-                <Grid container spacing={16}>
-                    <Grid item xs={12}>
-                        <Button
-                            size="large"
-                            type="button"
-                            color="primary"
-                            variant="contained"
-                            onClick={() => this.setState(() => ({
-                                [BEST_VALUES_INDEXES]: formula(compareData)
-                            }))}
-                        >
-                            Compare
-                        </Button>
+                    <Grid container spacing={16}>
+                        <Grid item xs={12}>
+                            <Button
+                                size="large"
+                                type="button"
+                                color="primary"
+                                variant="contained"
+                                onClick={() => this.setState(() => ({
+                                    [BEST_VALUES_INDEXES]: formula(compareData)
+                                }))}
+                            >
+                                Compare
+                            </Button>
+                        </Grid>
                     </Grid>
-                </Grid>
+                </CommonWrapper>
             </React.Fragment>
         );
     }
