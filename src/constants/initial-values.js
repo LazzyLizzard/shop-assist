@@ -1,7 +1,9 @@
-export const buildDefaultData = () => ({
-    unit: '',
-    price: '',
-    quantity: '',
-    r: '-',
-    key: Date.now()
-});
+import {PRICE, QUANTITY, UNIT} from "./field-names";
+
+export const DEFAULT_COMPARE_DATA = {
+    [UNIT]: '',
+    [PRICE]: '',
+    [QUANTITY]: ''
+};
+
+export const MDASH = '\u2014';

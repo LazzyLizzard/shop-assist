@@ -1,18 +1,21 @@
 import React from 'react';
-import {get} from 'lodash';
 import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import {Input} from '../../components';
-import {measures} from '../../constants/measures';
+import {calculatePricePerStandardValue} from '../../utils';
+import {setStyles} from "./utils";
+// import {MeasuresOptions} from "./measures-options";
+import {MEASURES} from "../../constants/measures";
+import MenuItem from "@material-ui/core/MenuItem";
+import {get} from "lodash";
 
-// TODO [sf] 10.02.2019 make component
+// https://github.com/mui-org/material-ui/issues/9573
 const getMeasuresOptions = (measureKey, addEmpty) => {
-    const itemsGroup = measures.find(measureItemGroup => measureItemGroup.key === measureKey);
+    const itemsGroup = MEASURES.find(measureItemGroup => measureItemGroup.key === measureKey);
     return [
         ...addEmpty ? [<MenuItem value="-" key={'-'}>- не выбрано -</MenuItem>] : [],
         ...get(itemsGroup, 'items', []).map(measureItem =>
@@ -27,14 +30,17 @@ const getMeasuresOptions = (measureKey, addEmpty) => {
     ]
 };
 
-export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandler, measureKey, measure, bestValues}) => {
+export const PriceItem = ({
+    compareData,
+    changeHandler,
+    allowDelete,
+    removeHandler,
+    measureKey,
+    measure,
+    bestValues,
+    standard
+}) => {
     const {itemName} = measure;
-    const setStyles = (index) => ({
-        ...{
-            padding: 'none'
-        },
-        ...bestValues.includes(index) ? {background: '#CAFFCA'} : {}
-    });
     return (
         compareData.map((item, index) => (
             <Grid
@@ -43,8 +49,8 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
                 direction="row"
                 justify="flex-start"
                 alignItems="flex-start"
-                style={setStyles(index)}
-                key={item.key}
+                style={setStyles(bestValues, index)}
+                key={index}
             >
                 <Grid item xs={6} sm={2}>
                     <Input
@@ -90,7 +96,13 @@ export const PriceItem = ({compareData, changeHandler, allowDelete, removeHandle
                         style={{fontWeight: 'bold'}}
                         id="r"
                         label={`RUB/${itemName}`}
-                        value={item.r}
+                        // value={item.r}
+                        value={calculatePricePerStandardValue({
+                            unit: item.unit,
+                            standard,
+                            price: item.price,
+                            quantity: item.quantity
+                        })}
                     />
                 </Grid>
                 <Grid item xs={3} sm={2}>
