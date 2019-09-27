@@ -1,4 +1,4 @@
-export const measures = [
+export const MEASURES = [
     {
         name: 'Weight',
         key: 'WEIGHT',

@@ -1,5 +1,12 @@
 import React from 'react';
+import {noop} from 'lodash';
 
-export const MeasuresList = ({measures}) => measures.map(item => (
-    <span style={{margin: '0 20px 0 0'}}>{item.name}</span>
+export const MeasuresList = ({measures, keyWord, changeMeasureHandler}) => measures.map(item => (
+    <span
+        key={item.key}
+        onClick={() => item.key === keyWord ? noop() : changeMeasureHandler(item.key)}
+        style={{
+        ...{marginRight: '20px'},
+        ...item.key === keyWord ? {fontWeight: 'bold'} : {}
+    }}>{item.name}</span>
 ));

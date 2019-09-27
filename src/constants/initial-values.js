@@ -1,6 +1,9 @@
-export const DEFAULT_DATA = {
-    unit: '',
-    price: '',
-    quantity: '',
-    result: '-'
+import {PRICE, QUANTITY, UNIT} from "./field-names";
+
+export const DEFAULT_COMPARE_DATA = {
+    [UNIT]: '',
+    [PRICE]: '',
+    [QUANTITY]: ''
 };
+
+export const MDASH = '\u2014';
