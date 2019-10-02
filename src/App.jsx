@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import {Button, Container, Grid} from '@material-ui/core';
 import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE} from './constants/field-names';
@@ -38,7 +37,7 @@ export class App extends Component {
         }));
     };
 
-    removeItem = index => {
+    removeItem = (index) => {
         this.setState(({compareData}) => ({
             [COMPARE_DATA]: compareData.filter((_, idx) => index !== idx)
         }));
@@ -56,7 +55,7 @@ export class App extends Component {
         return this.setState(({compareData}) => {
             // https://stackoverflow.com/a/49502115
             // shallow copies
-            const item = get(compareData, `[${index}]`, {});    // object
+            const item = get(compareData, `[${index}]`, {});
             return {
                 [COMPARE_DATA]: [
                     ...compareData.slice(0, index),
@@ -82,7 +81,7 @@ export class App extends Component {
     render() {
         const {compareData, measure} = this.state;
         return (
-            <React.Fragment>
+            <Container maxWidth={false} root>
                 <Header
                     measureText={measure.name}
                 />
@@ -105,9 +104,6 @@ export class App extends Component {
                             </Button>
                         </Grid>
                     </Grid>
-
-
-                    {/*/!* TODO [sf] 03.02.2019 use other key *!/*/}
 
                     <PriceItem
                         compareData={compareData}
@@ -136,7 +132,7 @@ export class App extends Component {
                         </Grid>
                     </Grid>
                 </CommonWrapper>
-            </React.Fragment>
+            </Container>
         );
     }
 }

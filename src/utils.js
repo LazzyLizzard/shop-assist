@@ -1,15 +1,20 @@
 import {min} from 'lodash';
 import {MDASH} from './constants/initial-values';
+import {PRICE, QUANTITY, UNIT} from './constants/field-names';
 
 export const fl = (values = [], standard) => {
     const allPricesPerStandard = values.map(item => calculatePricePerStandardValue({
-        unit: item.unit,
+        [UNIT]: item.unit,
         standard,
-        price: item.price,
-        quantity: item.quantity
+        [PRICE]: item.price,
+        [QUANTITY]: item.quantity
     }));
     const minVal = min(allPricesPerStandard);
-    return allPricesPerStandard.reduce((acc, item, index) => item === minVal ? [...acc, index] : acc, [])
+    return allPricesPerStandard.reduce(
+        (acc, item, index) => item === minVal
+            ? [...acc, index]
+            : acc, []
+    )
 };
 
 export const calculatePricePerStandardValue = ({unit, standard, price, quantity}) => {

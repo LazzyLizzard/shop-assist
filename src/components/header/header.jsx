@@ -1,15 +1,30 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import {COLS_SPACING} from '../../constants/layout';
-import {CommonWrapper} from "../common-wrapper";
-import './header.scss';
+import AppBar from '@material-ui/core/AppBar';
+import {IconButton, Toolbar, Typography} from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
+import {makeStyles} from '@material-ui/styles';
 
-export const Header = ({measureText = '...'}) => (
-    <CommonWrapper>
-        <Grid container spacing={COLS_SPACING}>
-            <Grid item xs={12}>
-                <div className="header">Shop assist / {measureText}</div>
-            </Grid>
-        </Grid>
-    </CommonWrapper>
-);
+const useStyles = makeStyles(() => ({
+    root: {
+        flexGrow: 1,
+    },
+    title: {
+        flexGrow: 1
+    },
+}));
+
+export const Header = ({measureText = '...'}) => {
+    const classes = useStyles();
+    return (
+        <AppBar position="static" color="primary">
+            <Toolbar>
+                <IconButton edge="start" color="inherit" aria-label="menu">
+                    <MenuIcon/>
+                </IconButton>
+                <Typography variant="h6" className={classes.title}>
+                    {measureText}
+                </Typography>
+            </Toolbar>
+        </AppBar>
+    );
+};

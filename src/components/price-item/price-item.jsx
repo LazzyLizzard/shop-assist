@@ -31,7 +31,7 @@ const getMeasuresOptions = (measureKey, addEmpty) => {
 };
 
 export const PriceItem = ({
-    compareData,
+    compareData = [],
     changeHandler,
     allowDelete,
     removeHandler,
@@ -52,7 +52,7 @@ export const PriceItem = ({
                 style={setStyles(bestValues, index)}
                 key={index}
             >
-                <Grid item xs={6} sm={2}>
+                <Grid item>
                     <Input
                         placeholder="к-во"
                         label="qty"
@@ -62,7 +62,7 @@ export const PriceItem = ({
                         changeHandler={changeHandler}
                     />
                 </Grid>
-                <Grid item xs={3} sm={2}>
+                <Grid item>
                     <FormControl>
                         <InputLabel htmlFor="unit">Unit</InputLabel>
                         <Select
@@ -79,7 +79,7 @@ export const PriceItem = ({
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item xs={3} sm={2}>
+                <Grid item>
                     <Input
                         placeholder="price"
                         label="Price"
@@ -89,14 +89,11 @@ export const PriceItem = ({
                         changeHandler={changeHandler}
                     />
                 </Grid>
-                <Grid item xs={3} sm={2}>
-
+                <Grid item>
                     <TextField
                         disabled
                         style={{fontWeight: 'bold'}}
-                        id="r"
                         label={`RUB/${itemName}`}
-                        // value={item.r}
                         value={calculatePricePerStandardValue({
                             unit: item.unit,
                             standard,
@@ -105,7 +102,7 @@ export const PriceItem = ({
                         })}
                     />
                 </Grid>
-                <Grid item xs={3} sm={2}>
+                <Grid item>
                     {allowDelete &&
                     <Button
                         type="button"
@@ -115,7 +112,7 @@ export const PriceItem = ({
                             removeHandler(index)
                         }}
                     >
-                        Delete {index}
+                        x {index}
                     </Button>
                     }
                 </Grid>
