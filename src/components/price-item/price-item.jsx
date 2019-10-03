@@ -1,16 +1,9 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import {Button, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, TextField} from '@material-ui/core';
 import {Input} from '../../components';
 import {calculatePricePerStandardValue} from '../../utils';
-import {setStyles} from "./utils";
-// import {MeasuresOptions} from "./measures-options";
-import {MEASURES} from "../../constants/measures";
-import MenuItem from "@material-ui/core/MenuItem";
+import {setStyles} from './utils';
+import {MEASURES} from '../../constants/measures';
 import {get} from "lodash";
 
 // https://github.com/mui-org/material-ui/issues/9573
@@ -30,6 +23,17 @@ const getMeasuresOptions = (measureKey, addEmpty) => {
     ]
 };
 
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        padding: theme.spacing(3, 2),
+        marginBottom: theme.spacing(3),
+    },
+    // TODO [sf] 03-Oct-19 use @material-ui/core/colors
+    paperActive: {
+        background: '#CAFFCA'
+    }
+}));
+
 export const PriceItem = ({
     compareData = [],
     changeHandler,
@@ -40,83 +44,88 @@ export const PriceItem = ({
     bestValues,
     standard
 }) => {
+    const classes = useStyles();
     const {itemName} = measure;
+
     return (
         compareData.map((item, index) => (
-            <Grid
-                container
-                spacing={16}
-                direction="row"
-                justify="flex-start"
-                alignItems="flex-start"
-                style={setStyles(bestValues, index)}
-                key={index}
-            >
-                <Grid item>
-                    <Input
-                        placeholder="к-во"
-                        label="qty"
-                        name="quantity"
-                        value={item.quantity}
-                        index={index}
-                        changeHandler={changeHandler}
-                    />
-                </Grid>
-                <Grid item>
-                    <FormControl>
-                        <InputLabel htmlFor="unit">Unit</InputLabel>
-                        <Select
-                            placeholder="measure"
-                            label="Unit"
-                            value={item.unit}
-                            onChange={(event) => changeHandler(event, index)}
-                            inputProps={{
-                                name: 'unit',
-                                id: 'unit'
+            <Paper className={classes.paper} style={setStyles(bestValues, index)} key={index}>
+                <Grid container>
+                    <Grid item lg={8} xs={10}>
+                        <Grid
+                            container
+                            spacing={3}
+                            direction="row"
+                            justify="flex-start"
+                            alignItems="flex-start"
+                            key={index}
+                        >
+                            <Grid item lg={4}>
+                                <Input
+                                    placeholder="Количество"
+                                    label="Количество"
+                                    name="quantity"
+                                    value={item.quantity}
+                                    index={index}
+                                    changeHandler={changeHandler}
+                                />
+                            </Grid>
+                            <Grid item lg={4}>
+                                <FormControl fullWidth={true}>
+                                    <InputLabel htmlFor="unit">Unit</InputLabel>
+                                    <Select
+                                        fullWidth={true}
+                                        label="Unit"
+                                        value={item.unit}
+                                        onChange={(event) => changeHandler(event, index)}
+                                        inputProps={{
+                                            name: 'unit'
+                                        }}
+                                    >
+                                        {getMeasuresOptions(measureKey, true)}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item lg={2}>
+                                <Input
+                                    placeholder="price"
+                                    label="Price"
+                                    name="price"
+                                    value={item.price}
+                                    index={index}
+                                    changeHandler={changeHandler}
+                                />
+                            </Grid>
+                            <Grid item lg={2}>
+                                <TextField
+                                    disabled
+                                    style={{fontWeight: 'bold'}}
+                                    label={`RUB/${itemName}`}
+                                    value={calculatePricePerStandardValue({
+                                        unit: item.unit,
+                                        standard,
+                                        price: item.price,
+                                        quantity: item.quantity
+                                    })}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item lg={2} xs={2}>
+                        <Button
+                            disabled={!allowDelete}
+                            type="button"
+                            color="secondary"
+                            variant="contained"
+                            onClick={() => {
+                                removeHandler(index)
                             }}
                         >
-                            {getMeasuresOptions(measureKey, true)}
-                        </Select>
-                    </FormControl>
+                            x {index}
+                        </Button>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <Input
-                        placeholder="price"
-                        label="Price"
-                        name="price"
-                        value={item.price}
-                        index={index}
-                        changeHandler={changeHandler}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextField
-                        disabled
-                        style={{fontWeight: 'bold'}}
-                        label={`RUB/${itemName}`}
-                        value={calculatePricePerStandardValue({
-                            unit: item.unit,
-                            standard,
-                            price: item.price,
-                            quantity: item.quantity
-                        })}
-                    />
-                </Grid>
-                <Grid item>
-                    {allowDelete &&
-                    <Button
-                        type="button"
-                        color="secondary"
-                        variant="contained"
-                        onClick={() => {
-                            removeHandler(index)
-                        }}
-                    >
-                        x {index}
-                    </Button>
-                    }
-                </Grid>
-            </Grid>
+            </Paper>
         ))
     )
 };

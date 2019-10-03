@@ -4,8 +4,8 @@ import {Button, Container, Grid} from '@material-ui/core';
 import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE} from './constants/field-names';
-import {CommonWrapper, Header, MeasuresList, PriceItem} from './components';
-import {fl} from "./utils";
+import {Header, MeasuresList, PriceItem} from './components';
+import {fl} from './utils';
 
 const MAX_ITEMS = 10;
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
@@ -81,12 +81,12 @@ export class App extends Component {
     render() {
         const {compareData, measure} = this.state;
         return (
-            <Container maxWidth={false} root>
+            <React.Fragment>
                 <Header
                     measureText={measure.name}
                 />
-                <CommonWrapper>
-                    <Grid container spacing={16}>
+                <Container maxWidth={false}>
+                    <Grid container>
                         <Grid item xs={6}>
                             <MeasuresList
                                 measures={MEASURES}
@@ -116,7 +116,7 @@ export class App extends Component {
                         standard={this.state.measure.standard}
                     />
 
-                    <Grid container spacing={16}>
+                    <Grid container spacing={3}>
                         <Grid item xs={12}>
                             <Button
                                 size="large"
@@ -131,8 +131,9 @@ export class App extends Component {
                             </Button>
                         </Grid>
                     </Grid>
-                </CommonWrapper>
-            </Container>
+
+                </Container>
+            </React.Fragment>
         );
     }
 }
