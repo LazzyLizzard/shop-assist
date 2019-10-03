@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Button, Container, Grid} from '@material-ui/core';
+import {Button, Container, Grid, Drawer} from '@material-ui/core';
 import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
-import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE} from './constants/field-names';
+import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
 import {Header, MeasuresList, PriceItem} from './components';
 import {fl} from './utils';
 
@@ -25,7 +25,8 @@ export class App extends Component {
     state = {
         [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
         [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
-        [BEST_VALUES_INDEXES]: []
+        [BEST_VALUES_INDEXES]: [],
+        [SIDEBAR_VISIBLE]: false
     };
 
     addItem = () => {
@@ -69,6 +70,12 @@ export class App extends Component {
         })
     };
 
+    sidebarToggler = () => {
+        this.setState((prevState) => ({
+            [SIDEBAR_VISIBLE]: !prevState[SIDEBAR_VISIBLE]
+        }))
+    };
+
     componentDidUpdate(_, prevState) {
         if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
             // TODO [sf] 12.03.2019 use debounce https://stackoverflow.com/a/48046243/3042031
@@ -84,7 +91,16 @@ export class App extends Component {
             <React.Fragment>
                 <Header
                     measureText={measure.name}
+                    sidebarToggler={this.sidebarToggler}
                 />
+                <Drawer
+                    variant="temporary"
+                    anchor="left"
+                    open={this.state[SIDEBAR_VISIBLE]}
+                    onClose={this.sidebarToggler}
+                >
+                    dfsdf
+                </Drawer>
                 <Container maxWidth={false}>
                     <Grid container>
                         <Grid item xs={6}>

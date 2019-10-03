@@ -13,12 +13,12 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-export const Header = ({measureText = '...'}) => {
+export const Header = ({measureText = '...', sidebarToggler}) => {
     const classes = useStyles();
     return (
         <AppBar position="static" color="primary">
             <Toolbar>
-                <IconButton edge="start" color="inherit" aria-label="menu">
+                <IconButton edge="start" color="inherit" aria-label="menu" onClick={sidebarToggler}>
                     <MenuIcon/>
                 </IconButton>
                 <Typography variant="h6" className={classes.title}>

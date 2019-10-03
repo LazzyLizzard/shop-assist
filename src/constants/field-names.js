@@ -4,3 +4,4 @@ export const PRICE = 'price';
 export const QUANTITY = 'quantity';
 export const BEST_VALUES_INDEXES = 'bestValuesIndexes';
 export const MEASURE = 'measure';
+export const SIDEBAR_VISIBLE = 'sidebarVisible';

@@ -1,10 +1,14 @@
 import React from 'react';
+import {get} from 'lodash';
 import {Button, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, TextField} from '@material-ui/core';
+import {green} from '@material-ui/core/colors';
 import {Input} from '../../components';
 import {calculatePricePerStandardValue} from '../../utils';
-import {setStyles} from './utils';
 import {MEASURES} from '../../constants/measures';
-import {get} from "lodash";
+
+const colors = {
+    greenBest: green["300"]
+};
 
 // https://github.com/mui-org/material-ui/issues/9573
 const getMeasuresOptions = (measureKey, addEmpty) => {
@@ -28,9 +32,8 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(3, 2),
         marginBottom: theme.spacing(3),
     },
-    // TODO [sf] 03-Oct-19 use @material-ui/core/colors
     paperActive: {
-        background: '#CAFFCA'
+        background: colors.greenBest
     }
 }));
 
@@ -47,9 +50,14 @@ export const PriceItem = ({
     const classes = useStyles();
     const {itemName} = measure;
 
+    // TODO [sf] 03.10.2019 fix adding class by @classNames
     return (
         compareData.map((item, index) => (
-            <Paper className={classes.paper} style={setStyles(bestValues, index)} key={index}>
+            <Paper
+                className={[classes.paper, bestValues.includes(index) ? classes.paperActive : ''].join(' ')}
+                key={index}
+                elevation={3}
+            >
                 <Grid container>
                     <Grid item lg={8} xs={10}>
                         <Grid
