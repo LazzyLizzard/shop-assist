@@ -4,8 +4,9 @@ import {Button, Container, Drawer, Grid} from '@material-ui/core';
 import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
-import {Header, MeasuresList, PriceItem} from './components';
+import {CompareButton, Header, MeasuresList, PriceItem} from './components';
 import {fl} from './utils';
+
 
 const MAX_ITEMS = 10;
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
@@ -20,15 +21,6 @@ const setMeasure = (measureKey) => {
         itemName: measureItem.itemName
     }
 };
-
-// const useStyles = makeStyles((theme) => ({
-//     compareButtonContainer: {
-//         padding: theme.spacing(3)
-//     }
-// }));
-// const classes = useStyles();
-
-// @StylerHoc
 
 export class App extends Component {
     state = {
@@ -85,6 +77,12 @@ export class App extends Component {
         }))
     };
 
+    setBestValue = () => {
+        this.setState({
+            [BEST_VALUES_INDEXES]: fl(this.state[COMPARE_DATA], this.state.measure.standard)
+        })
+    };
+
     componentDidUpdate(_, prevState) {
         if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
             // TODO [sf] 12.03.2019 use debounce https://stackoverflow.com/a/48046243/3042031
@@ -95,7 +93,6 @@ export class App extends Component {
     }
 
     render() {
-
         const {compareData, measure} = this.state;
         return (
             <React.Fragment>
@@ -115,20 +112,11 @@ export class App extends Component {
                         changeMeasureHandler={this.changeMeasureHandler}
                     />
                 </Drawer>
-                <Container maxWidth={false}>
-                    <div>
-                        <Button
-                            size="large"
-                            type="button"
-                            color="primary"
-                            variant="contained"
-                            onClick={() => this.setState({
-                                [BEST_VALUES_INDEXES]: fl(compareData, this.state.measure.standard)
-                            })}
-                        >
-                            Compare
-                        </Button>
-                    </div>
+                <Container maxWidth={false} style={{minHeight: "100%"}}>
+                    <CompareButton
+                        onClick={this.setBestValue}
+                        itemsCount={compareData.length}
+                    />
                     <Grid container>
                         <Grid item xs={6}>
                             <MeasuresList
@@ -137,15 +125,7 @@ export class App extends Component {
                                 changeMeasureHandler={this.changeMeasureHandler}
                             />
                         </Grid>
-                        <Grid item xs={6}>
-                            <Button
-                                type="button"
-                                variant="contained"
-                                disabled={compareData.length >= MAX_ITEMS}
-                                onClick={this.addItem}>
-                                Add (max. {MAX_ITEMS}), now {compareData.length}
-                            </Button>
-                        </Grid>
+
                     </Grid>
 
                     <PriceItem
@@ -158,7 +138,20 @@ export class App extends Component {
                         bestValues={this.state[BEST_VALUES_INDEXES]}
                         standard={this.state.measure.standard}
                     />
+                    <div style={{
+                        position: 'sticky',
+                        bottom: 0
+                    }}>
 
+                            <Button
+                                type="button"
+                                variant="contained"
+                                disabled={compareData.length >= MAX_ITEMS}
+                                onClick={this.addItem}>
+                                Add (max. {MAX_ITEMS}), now {compareData.length}
+                            </Button>
+
+                    </div>
 
                 </Container>
             </React.Fragment>

@@ -9,6 +9,11 @@ export const fl = (values = [], standard) => {
         [PRICE]: item.price,
         [QUANTITY]: item.quantity
     }));
+    // TODO [sf] 04-Oct-19 foresee a situation when not all items are filled and raise a <Snackbar />
+    // if (allPricesPerStandard.some(item => isNaN(item) )) {
+    //     return [];
+    // }
+    console.log('allPricesPerStandard', allPricesPerStandard);
     const minVal = min(allPricesPerStandard);
     return allPricesPerStandard.reduce(
         (acc, item, index) => item === minVal

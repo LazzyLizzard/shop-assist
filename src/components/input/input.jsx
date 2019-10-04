@@ -4,7 +4,7 @@ import FormControl from "@material-ui/core/FormControl/FormControl";
 
 export const Input = ({changeHandler, index, ...rest}) => {
     return (
-        <FormControl>
+        <FormControl fullWidth={true}>
             <TextField
                 autoComplete="off"
                 onChange={(event) => changeHandler(event, index)}
