@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import {Button, Container, Drawer, Grid} from '@material-ui/core';
 import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
-import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE} from './constants/field-names';
-import {CommonWrapper, Header, MeasuresList, PriceItem} from './components';
-import {fl} from "./utils";
+import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
+import {CompareButton, Header, MeasuresList, PriceItem} from './components';
+import {fl} from './utils';
+
 
 const MAX_ITEMS = 10;
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
@@ -26,7 +26,8 @@ export class App extends Component {
     state = {
         [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
         [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
-        [BEST_VALUES_INDEXES]: []
+        [BEST_VALUES_INDEXES]: [],
+        [SIDEBAR_VISIBLE]: false
     };
 
     addItem = () => {
@@ -38,7 +39,7 @@ export class App extends Component {
         }));
     };
 
-    removeItem = index => {
+    removeItem = (index) => {
         this.setState(({compareData}) => ({
             [COMPARE_DATA]: compareData.filter((_, idx) => index !== idx)
         }));
@@ -56,7 +57,7 @@ export class App extends Component {
         return this.setState(({compareData}) => {
             // https://stackoverflow.com/a/49502115
             // shallow copies
-            const item = get(compareData, `[${index}]`, {});    // object
+            const item = get(compareData, `[${index}]`, {});
             return {
                 [COMPARE_DATA]: [
                     ...compareData.slice(0, index),
@@ -67,6 +68,18 @@ export class App extends Component {
                     ...compareData.slice(index + 1, compareData.length)
                 ]
             }
+        })
+    };
+
+    sidebarToggler = () => {
+        this.setState((prevState) => ({
+            [SIDEBAR_VISIBLE]: !prevState[SIDEBAR_VISIBLE]
+        }))
+    };
+
+    setBestValue = () => {
+        this.setState({
+            [BEST_VALUES_INDEXES]: fl(this.state[COMPARE_DATA], this.state.measure.standard)
         })
     };
 
@@ -85,9 +98,26 @@ export class App extends Component {
             <React.Fragment>
                 <Header
                     measureText={measure.name}
+                    sidebarToggler={this.sidebarToggler}
                 />
-                <CommonWrapper>
-                    <Grid container spacing={16}>
+                <Drawer
+                    variant="temporary"
+                    anchor="left"
+                    open={this.state[SIDEBAR_VISIBLE]}
+                    onClose={this.sidebarToggler}
+                >
+                    <MeasuresList
+                        measures={MEASURES}
+                        keyWord={measure.keyWord}
+                        changeMeasureHandler={this.changeMeasureHandler}
+                    />
+                </Drawer>
+                <Container maxWidth={false} style={{minHeight: "100%"}}>
+                    <CompareButton
+                        onClick={this.setBestValue}
+                        itemsCount={compareData.length}
+                    />
+                    <Grid container>
                         <Grid item xs={6}>
                             <MeasuresList
                                 measures={MEASURES}
@@ -95,19 +125,8 @@ export class App extends Component {
                                 changeMeasureHandler={this.changeMeasureHandler}
                             />
                         </Grid>
-                        <Grid item xs={6}>
-                            <Button
-                                type="button"
-                                variant="contained"
-                                disabled={compareData.length >= MAX_ITEMS}
-                                onClick={this.addItem}>
-                                Add (max. {MAX_ITEMS}), now {compareData.length}
-                            </Button>
-                        </Grid>
+
                     </Grid>
-
-
-                    {/*/!* TODO [sf] 03.02.2019 use other key *!/*/}
 
                     <PriceItem
                         compareData={compareData}
@@ -119,24 +138,25 @@ export class App extends Component {
                         bestValues={this.state[BEST_VALUES_INDEXES]}
                         standard={this.state.measure.standard}
                     />
+                    <div style={{
+                        position: 'sticky',
+                        bottom: 0
+                    }}>
 
-                    <Grid container spacing={16}>
-                        <Grid item xs={12}>
                             <Button
-                                size="large"
                                 type="button"
-                                color="primary"
                                 variant="contained"
-                                onClick={() => this.setState({
-                                    [BEST_VALUES_INDEXES]: fl(compareData, this.state.measure.standard)
-                                })}
-                            >
-                                Compare
+                                disabled={compareData.length >= MAX_ITEMS}
+                                onClick={this.addItem}>
+                                Add (max. {MAX_ITEMS}), now {compareData.length}
                             </Button>
-                        </Grid>
-                    </Grid>
-                </CommonWrapper>
+
+                    </div>
+
+                </Container>
             </React.Fragment>
         );
     }
 }
+
+export default App;

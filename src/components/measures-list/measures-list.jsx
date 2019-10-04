@@ -6,7 +6,7 @@ export const MeasuresList = ({measures, keyWord, changeMeasureHandler}) => measu
         key={item.key}
         onClick={() => item.key === keyWord ? noop() : changeMeasureHandler(item.key)}
         style={{
-        ...{marginRight: '20px'},
+        marginRight: '20px',
         ...item.key === keyWord ? {fontWeight: 'bold'} : {}
     }}>{item.name}</span>
 ));
