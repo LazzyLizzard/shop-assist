@@ -1,7 +1,8 @@
 import React from 'react';
 import {get} from 'lodash';
-import {Button, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, TextField} from '@material-ui/core';
+import {Fab, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, TextField} from '@material-ui/core';
 import {green} from '@material-ui/core/colors';
+import DeleteIcon from '@material-ui/icons/Delete';
 import {Input} from '../../components';
 import {calculatePricePerStandardValue} from '../../utils';
 import {MEASURES} from '../../constants/measures';
@@ -59,7 +60,7 @@ export const PriceItem = ({
                 elevation={3}
             >
                 <Grid container>
-                    <Grid item lg={8} xs={10}>
+                    <Grid item lg={10} xs={10}>
                         <Grid
                             container
                             spacing={3}
@@ -119,18 +120,16 @@ export const PriceItem = ({
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item lg={2} xs={2}>
-                        <Button
+                    <Grid item lg={1} xs={2}>
+                        <Fab
                             disabled={!allowDelete}
-                            type="button"
                             color="secondary"
-                            variant="contained"
                             onClick={() => {
                                 removeHandler(index)
                             }}
                         >
-                            x {index}
-                        </Button>
+                            <DeleteIcon />
+                        </Fab>
                     </Grid>
                 </Grid>
             </Paper>

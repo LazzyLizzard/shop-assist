@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Button, Container, Grid, Drawer} from '@material-ui/core';
+import {Button, Container, Drawer, Grid} from '@material-ui/core';
 import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
@@ -20,6 +20,15 @@ const setMeasure = (measureKey) => {
         itemName: measureItem.itemName
     }
 };
+
+// const useStyles = makeStyles((theme) => ({
+//     compareButtonContainer: {
+//         padding: theme.spacing(3)
+//     }
+// }));
+// const classes = useStyles();
+
+// @StylerHoc
 
 export class App extends Component {
     state = {
@@ -86,6 +95,7 @@ export class App extends Component {
     }
 
     render() {
+
         const {compareData, measure} = this.state;
         return (
             <React.Fragment>
@@ -99,9 +109,26 @@ export class App extends Component {
                     open={this.state[SIDEBAR_VISIBLE]}
                     onClose={this.sidebarToggler}
                 >
-                    dfsdf
+                    <MeasuresList
+                        measures={MEASURES}
+                        keyWord={measure.keyWord}
+                        changeMeasureHandler={this.changeMeasureHandler}
+                    />
                 </Drawer>
                 <Container maxWidth={false}>
+                    <div>
+                        <Button
+                            size="large"
+                            type="button"
+                            color="primary"
+                            variant="contained"
+                            onClick={() => this.setState({
+                                [BEST_VALUES_INDEXES]: fl(compareData, this.state.measure.standard)
+                            })}
+                        >
+                            Compare
+                        </Button>
+                    </div>
                     <Grid container>
                         <Grid item xs={6}>
                             <MeasuresList
@@ -132,24 +159,11 @@ export class App extends Component {
                         standard={this.state.measure.standard}
                     />
 
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Button
-                                size="large"
-                                type="button"
-                                color="primary"
-                                variant="contained"
-                                onClick={() => this.setState({
-                                    [BEST_VALUES_INDEXES]: fl(compareData, this.state.measure.standard)
-                                })}
-                            >
-                                Compare
-                            </Button>
-                        </Grid>
-                    </Grid>
 
                 </Container>
             </React.Fragment>
         );
     }
 }
+
+export default App;
