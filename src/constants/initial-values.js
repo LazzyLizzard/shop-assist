@@ -8,3 +8,4 @@ export const DEFAULT_COMPARE_DATA = {
     [QUANTITY]: ''
 };
 
+export const MAX_ITEMS = 10;

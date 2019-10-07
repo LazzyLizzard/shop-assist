@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Button, Container, Drawer, Grid} from '@material-ui/core';
+import {Container, Drawer, Grid, Snackbar} from '@material-ui/core';
 import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
-import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
+import {BEST_VALUES_INDEXES, COMPARE_DATA, DISPLAY_SNACKBAR, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
 import {CompareButton, Header, MeasuresList, PriceItem} from './components';
 import {fl} from './utils';
 
-
-const MAX_ITEMS = 10;
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
 
 const setMeasure = (measureKey) => {
@@ -27,7 +25,8 @@ export class App extends Component {
         [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
         [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
         [BEST_VALUES_INDEXES]: [],
-        [SIDEBAR_VISIBLE]: false
+        [SIDEBAR_VISIBLE]: false,
+        [DISPLAY_SNACKBAR]: false
     };
 
     addItem = () => {
@@ -71,6 +70,12 @@ export class App extends Component {
         })
     };
 
+    resetItem = (index) => {
+        this.setState(({compareData}) => ({
+            [COMPARE_DATA]: compareData.map((item, itemIndex) => index === itemIndex ? DEFAULT_COMPARE_DATA : item)
+        }))
+    };
+
     sidebarToggler = () => {
         this.setState((prevState) => ({
             [SIDEBAR_VISIBLE]: !prevState[SIDEBAR_VISIBLE]
@@ -78,9 +83,10 @@ export class App extends Component {
     };
 
     setBestValue = () => {
-        this.setState({
-            [BEST_VALUES_INDEXES]: fl(this.state[COMPARE_DATA], this.state.measure.standard)
-        })
+        this.setState(() => ({
+            [BEST_VALUES_INDEXES]: fl(this.state[COMPARE_DATA], this.state.measure.standard),
+            [DISPLAY_SNACKBAR]: this.state[COMPARE_DATA].length === 1
+        }));
     };
 
     componentDidUpdate(_, prevState) {
@@ -112,10 +118,19 @@ export class App extends Component {
                         changeMeasureHandler={this.changeMeasureHandler}
                     />
                 </Drawer>
-                <Container maxWidth={false} style={{minHeight: "100%"}}>
+                <Container maxWidth={false}>
+                    <Snackbar
+                        open={this.state[DISPLAY_SNACKBAR]}
+                        message={<span id="message-id">Для сравнения необходимо не менее 2 товаров</span>}
+                        autoHideDuration={2000}
+                        onClose={() => this.setState({
+                            [DISPLAY_SNACKBAR]: false
+                        })}
+                    />
                     <CompareButton
-                        onClick={this.setBestValue}
+                        onSetBestValue={this.setBestValue}
                         itemsCount={compareData.length}
+                        onAddItem={this.addItem}
                     />
                     <Grid container>
                         <Grid item xs={6}>
@@ -137,21 +152,8 @@ export class App extends Component {
                         measure={measure}
                         bestValues={this.state[BEST_VALUES_INDEXES]}
                         standard={this.state.measure.standard}
+                        resetItemHandler={this.resetItem}
                     />
-                    <div style={{
-                        position: 'sticky',
-                        bottom: 0
-                    }}>
-
-                            <Button
-                                type="button"
-                                variant="contained"
-                                disabled={compareData.length >= MAX_ITEMS}
-                                onClick={this.addItem}>
-                                Add (max. {MAX_ITEMS}), now {compareData.length}
-                            </Button>
-
-                    </div>
 
                 </Container>
             </React.Fragment>

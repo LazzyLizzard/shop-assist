@@ -1,14 +1,19 @@
 import React from 'react';
 import {get} from 'lodash';
-import {Fab, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, TextField} from '@material-ui/core';
+import {FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, TextField} from '@material-ui/core';
 import {green} from '@material-ui/core/colors';
-import DeleteIcon from '@material-ui/icons/Delete';
+
 import {Input} from '../../components';
 import {calculatePricePerStandardValue} from '../../utils';
 import {MEASURES} from '../../constants/measures';
+import {RemoveButton} from "./remove-button";
 
 const colors = {
     greenBest: green["300"]
+};
+
+const INPUT_PROPS = {
+    name: 'unit'
 };
 
 // https://github.com/mui-org/material-ui/issues/9573
@@ -46,7 +51,8 @@ export const PriceItem = ({
     measureKey,
     measure,
     bestValues,
-    standard
+    standard,
+    resetItemHandler
 }) => {
     const classes = useStyles();
     const {itemName} = measure;
@@ -87,9 +93,7 @@ export const PriceItem = ({
                                         label="Unit"
                                         value={item.unit}
                                         onChange={(event) => changeHandler(event, index)}
-                                        inputProps={{
-                                            name: 'unit'
-                                        }}
+                                        inputProps={INPUT_PROPS}
                                     >
                                         {getMeasuresOptions(measureKey, true)}
                                     </Select>
@@ -108,7 +112,6 @@ export const PriceItem = ({
                             <Grid item lg={2}>
                                 <TextField
                                     disabled
-                                    style={{fontWeight: 'bold'}}
                                     label={`RUB/${itemName}`}
                                     value={calculatePricePerStandardValue({
                                         unit: item.unit,
@@ -121,15 +124,25 @@ export const PriceItem = ({
                         </Grid>
                     </Grid>
                     <Grid item lg={1} xs={2}>
-                        <Fab
-                            disabled={!allowDelete}
-                            color="secondary"
-                            onClick={() => {
+
+                    </Grid>
+                </Grid>
+                <Grid container>
+                    <Grid item>
+                        <RemoveButton
+                            allowDelete={allowDelete}
+                            onRemove={() => {
                                 removeHandler(index)
                             }}
-                        >
-                            <DeleteIcon />
-                        </Fab>
+                        />
+                    </Grid>
+                    <Grid item>
+                        <RemoveButton
+                            allowDelete={true}
+                            onRemove={() => {
+                                resetItemHandler(index)
+                            }}
+                        />
                     </Grid>
                 </Grid>
             </Paper>
