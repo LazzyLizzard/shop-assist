@@ -3,6 +3,7 @@ import AppBar from '@material-ui/core/AppBar';
 import {IconButton, Toolbar, Typography} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import {makeStyles} from '@material-ui/styles';
+import {MDASH} from '../../constants/initial-values';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -22,7 +23,7 @@ export const Header = ({measureText = '...', sidebarToggler}) => {
                     <MenuIcon/>
                 </IconButton>
                 <Typography variant="h6" className={classes.title}>
-                    {measureText}
+                    {measureText} {MDASH} Shop Assist
                 </Typography>
             </Toolbar>
         </AppBar>

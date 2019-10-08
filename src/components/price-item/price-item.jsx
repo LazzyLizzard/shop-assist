@@ -6,7 +6,18 @@ import {green} from '@material-ui/core/colors';
 import {Input} from '../../components';
 import {calculatePricePerStandardValue} from '../../utils';
 import {MEASURES} from '../../constants/measures';
-import {RemoveButton} from "./remove-button";
+import {RemoveButton} from './remove-button';
+
+const reg = /^[1-9]\d*(\.\d+)?$/;
+// const reg = /^\d+$/;
+// const reg = /^[0-9.]+$/;
+
+const checkValue = (value = '') => {
+    if (value.trim() === '') {
+        return false;
+    }
+    return !reg.test(value);
+};
 
 const colors = {
     greenBest: green["300"]
@@ -73,10 +84,10 @@ export const PriceItem = ({
                             direction="row"
                             justify="flex-start"
                             alignItems="flex-start"
-                            key={index}
                         >
-                            <Grid item lg={4}>
+                            <Grid item lg={4} xs={5}>
                                 <Input
+                                    error={checkValue(item.quantity)}
                                     placeholder="Количество"
                                     label="Количество"
                                     name="quantity"
@@ -85,7 +96,7 @@ export const PriceItem = ({
                                     changeHandler={changeHandler}
                                 />
                             </Grid>
-                            <Grid item lg={4}>
+                            <Grid item lg={2}>
                                 <FormControl fullWidth={true}>
                                     <InputLabel htmlFor="unit">Unit</InputLabel>
                                     <Select
@@ -99,8 +110,9 @@ export const PriceItem = ({
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item lg={2}>
+                            <Grid item lg={4} xs={5}>
                                 <Input
+                                    error={checkValue(item.price)}
                                     placeholder="price"
                                     label="Price"
                                     name="price"
@@ -109,27 +121,25 @@ export const PriceItem = ({
                                     changeHandler={changeHandler}
                                 />
                             </Grid>
-                            <Grid item lg={2}>
-                                <TextField
-                                    disabled
-                                    label={`RUB/${itemName}`}
-                                    value={calculatePricePerStandardValue({
-                                        unit: item.unit,
-                                        standard,
-                                        price: item.price,
-                                        quantity: item.quantity
-                                    })}
-                                />
-                            </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item lg={1} xs={2}>
-
+                    <Grid item lg={2} xs={2}>
+                        <TextField
+                            disabled
+                            label={`RUB/${itemName}`}
+                            value={calculatePricePerStandardValue({
+                                unit: item.unit,
+                                standard,
+                                price: item.price,
+                                quantity: item.quantity
+                            })}
+                        />
                     </Grid>
                 </Grid>
                 <Grid container>
                     <Grid item>
                         <RemoveButton
+                            buttonText="Удалить"
                             allowDelete={allowDelete}
                             onRemove={() => {
                                 removeHandler(index)
@@ -138,6 +148,7 @@ export const PriceItem = ({
                     </Grid>
                     <Grid item>
                         <RemoveButton
+                            buttonText="Очистить"
                             allowDelete={true}
                             onRemove={() => {
                                 resetItemHandler(index)
