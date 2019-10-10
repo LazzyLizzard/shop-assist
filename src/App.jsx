@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Container, Drawer, Grid, Snackbar} from '@material-ui/core';
+import {Container, Drawer, Grid, Snackbar, withWidth} from '@material-ui/core';
 import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
 import {BEST_VALUES_INDEXES, COMPARE_DATA, DISPLAY_SNACKBAR, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
@@ -20,7 +20,7 @@ const setMeasure = (measureKey) => {
     }
 };
 
-export class App extends Component {
+class AppClass extends Component {
     state = {
         [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
         [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
@@ -100,6 +100,7 @@ export class App extends Component {
 
     render() {
         const {compareData, measure} = this.state;
+        const {width} = this.props;
         return (
             <React.Fragment>
                 <Header
@@ -132,6 +133,7 @@ export class App extends Component {
                         itemsCount={compareData.length}
                         onAddItem={this.addItem}
                     />
+                    <div>{width}</div>
                     <Grid container>
                         <Grid item xs={6}>
                             <MeasuresList
@@ -161,4 +163,4 @@ export class App extends Component {
     }
 }
 
-export default App;
+export const App = withWidth()(AppClass);

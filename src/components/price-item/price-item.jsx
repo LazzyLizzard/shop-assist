@@ -76,7 +76,7 @@ export const PriceItem = ({
                 key={index}
                 elevation={3}
             >
-                <Grid container>
+                <Grid container spacing={3}>
                     <Grid item lg={10} xs={10}>
                         <Grid
                             container
@@ -85,7 +85,7 @@ export const PriceItem = ({
                             justify="flex-start"
                             alignItems="flex-start"
                         >
-                            <Grid item lg={4} xs={5}>
+                            <Grid item xs={4} md={4} sm={4}>
                                 <Input
                                     error={checkValue(item.quantity)}
                                     placeholder="Количество"
@@ -96,7 +96,7 @@ export const PriceItem = ({
                                     changeHandler={changeHandler}
                                 />
                             </Grid>
-                            <Grid item lg={2}>
+                            <Grid item  xs={4} lg={2} sm={4}>
                                 <FormControl fullWidth={true}>
                                     <InputLabel htmlFor="unit">Unit</InputLabel>
                                     <Select
@@ -110,7 +110,7 @@ export const PriceItem = ({
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item lg={4} xs={5}>
+                            <Grid item xs={4} md={4} sm={4}>
                                 <Input
                                     error={checkValue(item.price)}
                                     placeholder="price"
