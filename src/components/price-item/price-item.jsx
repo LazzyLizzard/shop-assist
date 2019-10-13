@@ -6,7 +6,7 @@ import {green} from '@material-ui/core/colors';
 import {Input} from '../../components';
 import {calculatePricePerStandardValue} from '../../utils';
 import {MEASURES} from '../../constants/measures';
-import {RemoveButton} from './remove-button';
+import {ControlButtons} from "./control-buttons";
 
 const reg = /^[1-9]\d*(\.\d+)?$/;
 // const reg = /^\d+$/;
@@ -136,26 +136,11 @@ export const PriceItem = ({
                         />
                     </Grid>
                 </Grid>
-                <Grid container>
-                    <Grid item>
-                        <RemoveButton
-                            buttonText="Удалить"
-                            allowDelete={allowDelete}
-                            onRemove={() => {
-                                removeHandler(index)
-                            }}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <RemoveButton
-                            buttonText="Очистить"
-                            allowDelete={true}
-                            onRemove={() => {
-                                resetItemHandler(index)
-                            }}
-                        />
-                    </Grid>
-                </Grid>
+                <ControlButtons
+                    allowDelete={allowDelete}
+                    onRemove={() => removeHandler(index)}
+                    onClear={() => resetItemHandler(index)}
+                />
             </Paper>
         ))
     )
