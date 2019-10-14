@@ -1,11 +1,20 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Container, Drawer, Grid, Snackbar, withWidth} from '@material-ui/core';
-import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
+import {Container, Drawer, Grid, withWidth} from '@material-ui/core';
+import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
-import {BEST_VALUES_INDEXES, COMPARE_DATA, DISPLAY_SNACKBAR, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
-import {CompareButton, Header, MeasuresList, PriceItem} from './components';
-import {fl} from './utils';
+import {
+    BEST_VALUES_INDEXES,
+    COMPARE_DATA,
+    DISPLAY_SNACKBARS,
+    MEASURE,
+    SIDEBAR_VISIBLE,
+    SNACKBAR_MINIMUM_TWO,
+    SNACKBAR_NOT_FILLED_DATA,
+    XXX
+} from './constants/field-names';
+import {CompareButton, Header, MeasuresList, PriceItem, SnackbarNamed} from './components';
+import {processCompare} from './utils';
 
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
 
@@ -24,9 +33,12 @@ class AppClass extends Component {
     state = {
         [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
         [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
-        [BEST_VALUES_INDEXES]: [],
+        [BEST_VALUES_INDEXES]: DEFAULT_BEST_VALUES,
         [SIDEBAR_VISIBLE]: false,
-        [DISPLAY_SNACKBAR]: false
+        [DISPLAY_SNACKBARS]: {
+            [SNACKBAR_MINIMUM_TWO]: false,
+            [SNACKBAR_NOT_FILLED_DATA]: false
+        }
     };
 
     addItem = () => {
@@ -83,17 +95,21 @@ class AppClass extends Component {
     };
 
     setBestValue = () => {
-        this.setState(() => ({
-            [BEST_VALUES_INDEXES]: fl(this.state[COMPARE_DATA], this.state.measure.standard),
-            [DISPLAY_SNACKBAR]: this.state[COMPARE_DATA].length === 1
-        }));
+        this.setState({
+            [BEST_VALUES_INDEXES]: processCompare(this.state[COMPARE_DATA], this.state.measure.standard),
+            [DISPLAY_SNACKBARS]: {
+                [SNACKBAR_MINIMUM_TWO]: this.state[COMPARE_DATA].length === 1,
+                // TODO [sf] 14-Oct-19 check this field, why no change?
+                [SNACKBAR_NOT_FILLED_DATA]: this.state[BEST_VALUES_INDEXES].errors.length > 0
+            }
+        });
     };
 
     componentDidUpdate(_, prevState) {
         if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
             // TODO [sf] 12.03.2019 use debounce https://stackoverflow.com/a/48046243/3042031
             this.setState({
-                [BEST_VALUES_INDEXES]: []
+                [BEST_VALUES_INDEXES]: DEFAULT_BEST_VALUES
             })
         }
     }
@@ -120,14 +136,25 @@ class AppClass extends Component {
                     />
                 </Drawer>
                 <Container maxWidth={false}>
-                    <Snackbar
-                        open={this.state[DISPLAY_SNACKBAR]}
-                        message={<span id="message-id">Для сравнения необходимо не менее 2 товаров</span>}
-                        autoHideDuration={2000}
-                        onClose={() => this.setState({
-                            [DISPLAY_SNACKBAR]: false
-                        })}
-                    />
+
+                    {
+                        XXX.map(item => (
+                            <SnackbarNamed
+                                key={item.key}
+                                text={item.text}
+                                snackbarName={item.key}
+                                isOpen={this.state[DISPLAY_SNACKBARS][item.key]}
+                                onClose={() => this.setState(({displaySnackBar}) => ({
+                                        [DISPLAY_SNACKBARS]: {
+                                            ...displaySnackBar,
+                                            [item.key]: false
+                                        }
+                                    })
+                                )}
+                            />
+                        ))
+                    }
+
                     <CompareButton
                         onSetBestValue={this.setBestValue}
                         itemsCount={compareData.length}

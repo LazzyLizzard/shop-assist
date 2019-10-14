@@ -1,29 +1,42 @@
 import {min} from 'lodash';
-import {MDASH} from './constants/initial-values';
+import {DEFAULT_BEST_VALUES, MDASH} from './constants/initial-values';
 import {PRICE, QUANTITY, UNIT} from './constants/field-names';
 
-export const fl = (values = [], standard) => {
+export const processCompare = (values = [], standard) => {
     // single set of data cannot be compared
     if (values.length === 1) {
-        return [];
+        return DEFAULT_BEST_VALUES;
     }
-    const allPricesPerStandard = values.map(item => calculatePricePerStandardValue({
-        [UNIT]: item.unit,
-        standard,
-        [PRICE]: item.price,
-        [QUANTITY]: item.quantity
-    }));
-    // TODO [sf] 04-Oct-19 foresee a situation when not all items are filled and raise a <Snackbar />
-    // if (allPricesPerStandard.some(item => isNaN(item) )) {
-    //     return [];
-    // }
-    const minVal = min(allPricesPerStandard);
-    return allPricesPerStandard.reduce(
-        (acc, item, index) => item === minVal
-            ? [...acc, index]
-            : acc, []
-    )
+
+    const allPricesPerStandard = values.map((item, index) => {
+            const value = calculatePricePerStandardValue({
+                [UNIT]: item.unit,
+                standard,
+                [PRICE]: item.price,
+                [QUANTITY]: item.quantity
+            });
+            return ({
+                index,
+                value,
+                error: isNaN(value)
+            });
+        }
+    );
+
+    const minimumValue = min(
+        allPricesPerStandard
+            .filter(item => !item.error)
+            .map(item => item.value)
+    );
+
+    return {
+        minPrice: minimumValue || null,
+        errors: allPricesPerStandard
+            .filter(item => item.error)
+            .map(item => item.index)
+    }
 };
+
 
 export const calculatePricePerStandardValue = ({unit, standard, price, quantity}) => {
     const result = Number(unit) * Number(price) / (Number(quantity) / Number(standard));
