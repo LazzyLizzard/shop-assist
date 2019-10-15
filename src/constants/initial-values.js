@@ -8,3 +8,9 @@ export const DEFAULT_COMPARE_DATA = {
     [QUANTITY]: ''
 };
 
+export const DEFAULT_BEST_VALUES = {
+    errors: [],
+    minPrice: null
+};
+
+export const MAX_ITEMS = 10;

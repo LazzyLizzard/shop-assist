@@ -5,3 +5,23 @@ export const QUANTITY = 'quantity';
 export const BEST_VALUES_INDEXES = 'bestValuesIndexes';
 export const MEASURE = 'measure';
 export const SIDEBAR_VISIBLE = 'sidebarVisible';
+export const DISPLAY_SNACKBARS = 'displaySnackBars';
+
+export const SNACKBAR_MINIMUM_TWO = 'SNACKBAR_MINIMUM_TWO';
+export const SNACKBAR_NOT_FILLED_DATA = 'SNACKBAR_NOT_FILLED_DATA';
+
+export const SNACKBARS_LIST = [
+    {
+        key: SNACKBAR_MINIMUM_TWO,
+        text: 'Для сравнения необходимо не менее 2 позиций'
+    },
+    {
+        key: SNACKBAR_NOT_FILLED_DATA,
+        text: 'Не все поля заполнены полностью'
+    }
+];
+
+export const SNACKBAR_POSITION = {
+    vertical: 'bottom',
+    horizontal: 'right'
+};

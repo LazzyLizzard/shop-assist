@@ -1,14 +1,22 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Button, Container, Drawer, Grid} from '@material-ui/core';
-import {DEFAULT_COMPARE_DATA} from './constants/initial-values';
+import {Container, Drawer, Grid, Snackbar, withWidth} from '@material-ui/core';
+import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
-import {BEST_VALUES_INDEXES, COMPARE_DATA, MEASURE, SIDEBAR_VISIBLE} from './constants/field-names';
+import {
+    BEST_VALUES_INDEXES,
+    COMPARE_DATA,
+    DISPLAY_SNACKBARS,
+    MEASURE,
+    SIDEBAR_VISIBLE,
+    SNACKBAR_MINIMUM_TWO,
+    SNACKBAR_NOT_FILLED_DATA,
+    SNACKBAR_POSITION,
+    SNACKBARS_LIST
+} from './constants/field-names';
 import {CompareButton, Header, MeasuresList, PriceItem} from './components';
-import {fl} from './utils';
+import {processCompare} from './utils';
 
-
-const MAX_ITEMS = 10;
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
 
 const setMeasure = (measureKey) => {
@@ -22,13 +30,33 @@ const setMeasure = (measureKey) => {
     }
 };
 
-export class App extends Component {
+class AppClass extends Component {
     state = {
         [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
         [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
-        [BEST_VALUES_INDEXES]: [],
-        [SIDEBAR_VISIBLE]: false
+        [BEST_VALUES_INDEXES]: DEFAULT_BEST_VALUES,
+        [SIDEBAR_VISIBLE]: false,
+        [DISPLAY_SNACKBARS]: {
+            [SNACKBAR_MINIMUM_TWO]: false,
+            [SNACKBAR_NOT_FILLED_DATA]: false
+        }
     };
+
+    buildSnackbarsList = (data = []) => data.map(item => (
+        <Snackbar
+            key={item.key}
+            message={item.text}
+            autoHideDuration={3000}
+            open={this.state[DISPLAY_SNACKBARS][item.key]}
+            anchorOrigin={SNACKBAR_POSITION}
+            onClose={() => this.setState(({displaySnackBar}) => ({
+                [DISPLAY_SNACKBARS]: {
+                    ...displaySnackBar,
+                    [item.key]: false
+                }
+            }))}
+        />
+    ));
 
     addItem = () => {
         this.setState(({compareData}) => ({
@@ -71,6 +99,12 @@ export class App extends Component {
         })
     };
 
+    resetItem = (index) => {
+        this.setState(({compareData}) => ({
+            [COMPARE_DATA]: compareData.map((item, itemIndex) => index === itemIndex ? DEFAULT_COMPARE_DATA : item)
+        }))
+    };
+
     sidebarToggler = () => {
         this.setState((prevState) => ({
             [SIDEBAR_VISIBLE]: !prevState[SIDEBAR_VISIBLE]
@@ -78,22 +112,28 @@ export class App extends Component {
     };
 
     setBestValue = () => {
+        const cData = processCompare(this.state[COMPARE_DATA], this.state.measure.standard);
         this.setState({
-            [BEST_VALUES_INDEXES]: fl(this.state[COMPARE_DATA], this.state.measure.standard)
-        })
+            [BEST_VALUES_INDEXES]: cData,
+            [DISPLAY_SNACKBARS]: {
+                [SNACKBAR_MINIMUM_TWO]: this.state[COMPARE_DATA].length === 1,
+                [SNACKBAR_NOT_FILLED_DATA]: cData.errors.length > 0
+            }
+        });
     };
 
     componentDidUpdate(_, prevState) {
         if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
             // TODO [sf] 12.03.2019 use debounce https://stackoverflow.com/a/48046243/3042031
             this.setState({
-                [BEST_VALUES_INDEXES]: []
+                [BEST_VALUES_INDEXES]: DEFAULT_BEST_VALUES
             })
         }
     }
 
     render() {
         const {compareData, measure} = this.state;
+        const {width} = this.props;
         return (
             <React.Fragment>
                 <Header
@@ -112,11 +152,16 @@ export class App extends Component {
                         changeMeasureHandler={this.changeMeasureHandler}
                     />
                 </Drawer>
-                <Container maxWidth={false} style={{minHeight: "100%"}}>
+                <Container maxWidth={false}>
+
+                    {this.buildSnackbarsList(SNACKBARS_LIST)}
+
                     <CompareButton
-                        onClick={this.setBestValue}
+                        onSetBestValue={this.setBestValue}
                         itemsCount={compareData.length}
+                        onAddItem={this.addItem}
                     />
+                    <div>{width}</div>
                     <Grid container>
                         <Grid item xs={6}>
                             <MeasuresList
@@ -137,26 +182,12 @@ export class App extends Component {
                         measure={measure}
                         bestValues={this.state[BEST_VALUES_INDEXES]}
                         standard={this.state.measure.standard}
+                        resetItemHandler={this.resetItem}
                     />
-                    <div style={{
-                        position: 'sticky',
-                        bottom: 0
-                    }}>
-
-                            <Button
-                                type="button"
-                                variant="contained"
-                                disabled={compareData.length >= MAX_ITEMS}
-                                onClick={this.addItem}>
-                                Add (max. {MAX_ITEMS}), now {compareData.length}
-                            </Button>
-
-                    </div>
 
                 </Container>
-            </React.Fragment>
-        );
+            </React.Fragment>);
     }
 }
 
-export default App;
+export const App = withWidth()(AppClass);
