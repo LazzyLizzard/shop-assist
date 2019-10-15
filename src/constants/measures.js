@@ -1,7 +1,10 @@
+export const MEASURE_KEY_WEIGHT = 'WEIGHT';
+export const MEASURE_KEY_VOLUME = 'VOLUME';
+
 export const MEASURES = [
     {
         name: 'Weight',
-        key: 'WEIGHT',
+        key: MEASURE_KEY_WEIGHT,
         items: [
             {
                 itemName: 'Kg',
@@ -20,7 +23,7 @@ export const MEASURES = [
     },
     {
         name: 'Volume',
-        key: 'VOLUME',
+        key: MEASURE_KEY_VOLUME,
         items: [
             {
                 itemName: 'Liter',

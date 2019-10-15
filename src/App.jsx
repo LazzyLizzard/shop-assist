@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Container, Drawer, Grid, Snackbar, withWidth} from '@material-ui/core';
+import {Container, Drawer, Snackbar, withWidth} from '@material-ui/core';
 import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
 import {
@@ -162,16 +162,6 @@ class AppClass extends Component {
                         onAddItem={this.addItem}
                     />
                     <div>{width}</div>
-                    <Grid container>
-                        <Grid item xs={6}>
-                            <MeasuresList
-                                measures={MEASURES}
-                                keyWord={measure.keyWord}
-                                changeMeasureHandler={this.changeMeasureHandler}
-                            />
-                        </Grid>
-
-                    </Grid>
 
                     <PriceItem
                         compareData={compareData}
