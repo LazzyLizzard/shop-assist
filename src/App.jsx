@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Container, Drawer, Grid, withWidth} from '@material-ui/core';
+import {Container, Drawer, Grid, Snackbar, withWidth} from '@material-ui/core';
 import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURES} from './constants/measures';
 import {
@@ -11,9 +11,10 @@ import {
     SIDEBAR_VISIBLE,
     SNACKBAR_MINIMUM_TWO,
     SNACKBAR_NOT_FILLED_DATA,
-    XXX
+    SNACKBAR_POSITION,
+    SNACKBARS_LIST
 } from './constants/field-names';
-import {CompareButton, Header, MeasuresList, PriceItem, SnackbarNamed} from './components';
+import {CompareButton, Header, MeasuresList, PriceItem} from './components';
 import {processCompare} from './utils';
 
 const DEFAULT_MEASURE_KEY = 'WEIGHT';
@@ -40,6 +41,22 @@ class AppClass extends Component {
             [SNACKBAR_NOT_FILLED_DATA]: false
         }
     };
+
+    buildSnackbarsList = (data = []) => data.map(item => (
+        <Snackbar
+            key={item.key}
+            message={item.text}
+            autoHideDuration={3000}
+            open={this.state[DISPLAY_SNACKBARS][item.key]}
+            anchorOrigin={SNACKBAR_POSITION}
+            onClose={() => this.setState(({displaySnackBar}) => ({
+                [DISPLAY_SNACKBARS]: {
+                    ...displaySnackBar,
+                    [item.key]: false
+                }
+            }))}
+        />
+    ));
 
     addItem = () => {
         this.setState(({compareData}) => ({
@@ -95,12 +112,12 @@ class AppClass extends Component {
     };
 
     setBestValue = () => {
+        const cData = processCompare(this.state[COMPARE_DATA], this.state.measure.standard);
         this.setState({
-            [BEST_VALUES_INDEXES]: processCompare(this.state[COMPARE_DATA], this.state.measure.standard),
+            [BEST_VALUES_INDEXES]: cData,
             [DISPLAY_SNACKBARS]: {
                 [SNACKBAR_MINIMUM_TWO]: this.state[COMPARE_DATA].length === 1,
-                // TODO [sf] 14-Oct-19 check this field, why no change?
-                [SNACKBAR_NOT_FILLED_DATA]: this.state[BEST_VALUES_INDEXES].errors.length > 0
+                [SNACKBAR_NOT_FILLED_DATA]: cData.errors.length > 0
             }
         });
     };
@@ -137,23 +154,7 @@ class AppClass extends Component {
                 </Drawer>
                 <Container maxWidth={false}>
 
-                    {
-                        XXX.map(item => (
-                            <SnackbarNamed
-                                key={item.key}
-                                text={item.text}
-                                snackbarName={item.key}
-                                isOpen={this.state[DISPLAY_SNACKBARS][item.key]}
-                                onClose={() => this.setState(({displaySnackBar}) => ({
-                                        [DISPLAY_SNACKBARS]: {
-                                            ...displaySnackBar,
-                                            [item.key]: false
-                                        }
-                                    })
-                                )}
-                            />
-                        ))
-                    }
+                    {this.buildSnackbarsList(SNACKBARS_LIST)}
 
                     <CompareButton
                         onSetBestValue={this.setBestValue}
@@ -185,8 +186,7 @@ class AppClass extends Component {
                     />
 
                 </Container>
-            </React.Fragment>
-        );
+            </React.Fragment>);
     }
 }
 

@@ -10,13 +10,18 @@ export const DISPLAY_SNACKBARS = 'displaySnackBars';
 export const SNACKBAR_MINIMUM_TWO = 'SNACKBAR_MINIMUM_TWO';
 export const SNACKBAR_NOT_FILLED_DATA = 'SNACKBAR_NOT_FILLED_DATA';
 
-export const XXX = [
+export const SNACKBARS_LIST = [
     {
         key: SNACKBAR_MINIMUM_TWO,
-        text: 'не ментше 2'
+        text: 'Для сравнения необходимо не менее 2 позиций'
     },
     {
         key: SNACKBAR_NOT_FILLED_DATA,
-        text: 'не заполне поле'
+        text: 'Не все поля заполнены полностью'
     }
 ];
+
+export const SNACKBAR_POSITION = {
+    vertical: 'bottom',
+    horizontal: 'right'
+};

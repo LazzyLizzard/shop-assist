@@ -3,4 +3,3 @@ export {Input} from './input';
 export {MeasuresList} from './measures-list';
 export {Header} from './header';
 export {CompareButton} from './compare-button';
-export {SnackbarNamed} from './snackbar-named';
