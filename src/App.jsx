@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
 import {Container, Drawer, Snackbar, withWidth} from '@material-ui/core';
 import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
-import {MEASURES} from './constants/measures';
+import {MEASURE_KEY_WEIGHT, MEASURES} from './constants/measures';
 import {
     BEST_VALUES_INDEXES,
     COMPARE_DATA,
@@ -17,7 +17,7 @@ import {
 import {CompareButton, Header, MeasuresList, PriceItem} from './components';
 import {processCompare} from './utils';
 
-const DEFAULT_MEASURE_KEY = 'WEIGHT';
+const DEFAULT_MEASURE_KEY = MEASURE_KEY_WEIGHT;
 
 const setMeasure = (measureKey) => {
     const measureObject = MEASURES.find(object => object.key === measureKey);

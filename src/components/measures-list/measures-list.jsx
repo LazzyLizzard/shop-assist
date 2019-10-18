@@ -13,7 +13,7 @@ const ICONS = {
 const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
-        minWidth: 360,
+        minWidth: 300,
         backgroundColor: theme.palette.background.paper,
     },
 }));
@@ -28,7 +28,9 @@ export const MeasuresList = ({measures, keyWord, changeMeasureHandler}) => {
                         button
                         key={item.key}
                         selected={item.key === keyWord}
-                        onClick={() => item.key === keyWord ? noop() : changeMeasureHandler(item.key)}
+                        onClick={() => item.key === keyWord
+                            ? noop()
+                            : changeMeasureHandler(item.key)}
                     >
                         <ListItemIcon>
                             {ICONS[item.key]}
