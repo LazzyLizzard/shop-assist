@@ -1,11 +1,10 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {get, isEqual} from 'lodash';
 import {Container, Drawer, Snackbar, withWidth} from '@material-ui/core';
 import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURE_KEY_WEIGHT, MEASURES} from './constants/measures';
 import {
     BEST_VALUES_INDEXES,
-    COMPARE_DATA,
     DISPLAY_SNACKBARS,
     MEASURE,
     SIDEBAR_VISIBLE,
@@ -30,7 +29,8 @@ const setMeasure = (measureKey) => {
     }
 };
 
-class AppClass extends Component {
+const AppClass = () => {
+    const [[COMPARE_DATA], setCompareData] = useState([DEFAULT_COMPARE_DATA]);
     state = {
         [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
         [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
