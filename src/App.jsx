@@ -5,7 +5,6 @@ import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-val
 import {MEASURE_KEY_WEIGHT, MEASURES} from './constants/measures';
 import {
     BEST_VALUES_INDEXES,
-    DISPLAY_SNACKBARS,
     MEASURE,
     SIDEBAR_VISIBLE,
     SNACKBAR_MINIMUM_TWO,
@@ -31,15 +30,21 @@ const setMeasure = (measureKey) => {
 
 const AppClass = () => {
     const [[COMPARE_DATA], setCompareData] = useState([DEFAULT_COMPARE_DATA]);
-    state = {
-        [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
-        [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
-        [BEST_VALUES_INDEXES]: DEFAULT_BEST_VALUES,
-        [SIDEBAR_VISIBLE]: false,
+    const [[DISPLAY_SNACKBARS], setSnackbars] = useState({
         [DISPLAY_SNACKBARS]: {
             [SNACKBAR_MINIMUM_TWO]: false,
             [SNACKBAR_NOT_FILLED_DATA]: false
-        }
+        }});
+
+    state = {
+        // [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
+        [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
+        [BEST_VALUES_INDEXES]: DEFAULT_BEST_VALUES,
+        [SIDEBAR_VISIBLE]: false,
+        // [DISPLAY_SNACKBARS]: {
+        //     [SNACKBAR_MINIMUM_TWO]: false,
+        //     [SNACKBAR_NOT_FILLED_DATA]: false
+        // }
     };
 
     buildSnackbarsList = (data = []) => data.map(item => (
