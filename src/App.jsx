@@ -49,9 +49,9 @@ class AppClass extends Component {
             autoHideDuration={3000}
             open={this.state[DISPLAY_SNACKBARS][item.key]}
             anchorOrigin={SNACKBAR_POSITION}
-            onClose={() => this.setState(({displaySnackBar}) => ({
+            onClose={() => this.setState(({displaySnackBars}) => ({
                 [DISPLAY_SNACKBARS]: {
-                    ...displaySnackBar,
+                    ...displaySnackBars,
                     [item.key]: false
                 }
             }))}
@@ -78,6 +78,7 @@ class AppClass extends Component {
         this.setState({
             [MEASURE]: setMeasure(measureKey)
         });
+        this.sidebarToggler();
     };
 
     changeHandler = (event, index) => {
@@ -150,6 +151,7 @@ class AppClass extends Component {
                         measures={MEASURES}
                         keyWord={measure.keyWord}
                         changeMeasureHandler={this.changeMeasureHandler}
+                        onClose={this.sidebarToggler}
                     />
                 </Drawer>
                 <Container maxWidth={false}>
