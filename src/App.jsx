@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {get, isEqual} from 'lodash';
-import {Container, Drawer, Grid, Snackbar, withWidth} from '@material-ui/core';
+import {Container, Drawer, Snackbar, withWidth} from '@material-ui/core';
 import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
-import {MEASURES} from './constants/measures';
+import {MEASURE_KEY_WEIGHT, MEASURES} from './constants/measures';
 import {
     BEST_VALUES_INDEXES,
     COMPARE_DATA,
@@ -17,7 +17,7 @@ import {
 import {CompareButton, Header, MeasuresList, PriceItem} from './components';
 import {processCompare} from './utils';
 
-const DEFAULT_MEASURE_KEY = 'WEIGHT';
+const DEFAULT_MEASURE_KEY = MEASURE_KEY_WEIGHT;
 
 const setMeasure = (measureKey) => {
     const measureObject = MEASURES.find(object => object.key === measureKey);
@@ -49,9 +49,9 @@ class AppClass extends Component {
             autoHideDuration={3000}
             open={this.state[DISPLAY_SNACKBARS][item.key]}
             anchorOrigin={SNACKBAR_POSITION}
-            onClose={() => this.setState(({displaySnackBar}) => ({
+            onClose={() => this.setState(({displaySnackBars}) => ({
                 [DISPLAY_SNACKBARS]: {
-                    ...displaySnackBar,
+                    ...displaySnackBars,
                     [item.key]: false
                 }
             }))}
@@ -78,6 +78,7 @@ class AppClass extends Component {
         this.setState({
             [MEASURE]: setMeasure(measureKey)
         });
+        this.sidebarToggler();
     };
 
     changeHandler = (event, index) => {
@@ -150,6 +151,7 @@ class AppClass extends Component {
                         measures={MEASURES}
                         keyWord={measure.keyWord}
                         changeMeasureHandler={this.changeMeasureHandler}
+                        onClose={this.sidebarToggler}
                     />
                 </Drawer>
                 <Container maxWidth={false}>
@@ -162,16 +164,6 @@ class AppClass extends Component {
                         onAddItem={this.addItem}
                     />
                     <div>{width}</div>
-                    <Grid container>
-                        <Grid item xs={6}>
-                            <MeasuresList
-                                measures={MEASURES}
-                                keyWord={measure.keyWord}
-                                changeMeasureHandler={this.changeMeasureHandler}
-                            />
-                        </Grid>
-
-                    </Grid>
 
                     <PriceItem
                         compareData={compareData}
