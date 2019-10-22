@@ -7,8 +7,8 @@ export const MEASURE = 'measure';
 export const SIDEBAR_VISIBLE = 'sidebarVisible';
 export const DISPLAY_SNACKBARS = 'displaySnackBars';
 
-export const SNACKBAR_MINIMUM_TWO = 'SNACKBAR_MINIMUM_TWO';
-export const SNACKBAR_NOT_FILLED_DATA = 'SNACKBAR_NOT_FILLED_DATA';
+export const SNACKBAR_MINIMUM_TWO = 'snackbarMinimumTwo';
+export const SNACKBAR_NOT_FILLED_DATA = 'snackbarNotFilledData';
 
 export const SNACKBARS_LIST = [
     {
