@@ -1,4 +1,5 @@
 import React from 'react';
+import {noop} from 'lodash';
 import {Divider, List, ListItem, ListItemIcon, ListItemText, makeStyles} from "@material-ui/core";
 import LocalDrinkIcon from '@material-ui/icons/LocalDrink';
 import FitnessCenterIcon from '@material-ui/icons/FitnessCenter';
@@ -17,12 +18,12 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export const MeasuresList = ({measures = [], keyWord, changeMeasureHandler, onClose}) => {
+export const MeasuresList = ({measures = [], keyWord, changeMeasureHandler = noop, onClose = noop}) => {
     const classes = useStyles();
     return (
         <div className={classes.root}>
             <List>
-                {measures.map((item, index) => (
+                {measures.map((item) => (
                     <ListItem
                         button
                         key={item.key}
