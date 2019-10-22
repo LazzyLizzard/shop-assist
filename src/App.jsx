@@ -1,14 +1,10 @@
-import React, {useState} from 'react';
-import {get, isEqual} from 'lodash';
+import React, {useEffect, useState} from 'react';
+import {get} from 'lodash';
 import {Container, Drawer, Snackbar, withWidth} from '@material-ui/core';
 import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
 import {MEASURE_KEY_WEIGHT, MEASURES} from './constants/measures';
 import {
-    BEST_VALUES_INDEXES,
-    COMPARE_DATA,
     DISPLAY_SNACKBARS,
-    MEASURE,
-    SIDEBAR_VISIBLE,
     SNACKBAR_MINIMUM_TWO,
     SNACKBAR_NOT_FILLED_DATA,
     SNACKBAR_POSITION,
@@ -30,11 +26,11 @@ const setMeasure = (measureKey) => {
     }
 };
 
-const AppClass = () => {
+const AppClass = ({width}) => {
 
     const [compareData, setCompareData] = useState([DEFAULT_COMPARE_DATA]);
     const [measure, setMeasureKey] = useState(setMeasure(DEFAULT_MEASURE_KEY));
-    // const [[BEST_VALUES_INDEXES]] = useState(DEFAULT_BEST_VALUES);
+    const [bestValuesIndexes, setBestIndexes] = useState(DEFAULT_BEST_VALUES);
     const [sidebarVisible, setSidebarVisible] = useState(false);
     const [displaySnackBars, setSnackbars] = useState({
         [DISPLAY_SNACKBARS]: {
@@ -43,51 +39,35 @@ const AppClass = () => {
         }
     });
 
-    // state = {
-    // [COMPARE_DATA]: [DEFAULT_COMPARE_DATA],
-    // [MEASURE]: setMeasure(DEFAULT_MEASURE_KEY),
-    // [BEST_VALUES_INDEXES]: DEFAULT_BEST_VALUES,
-    // [SIDEBAR_VISIBLE]: false,
-    // [DISPLAY_SNACKBARS]: {
-    //     [SNACKBAR_MINIMUM_TWO]: false,
-    //     [SNACKBAR_NOT_FILLED_DATA]: false
-    // }
-    // };
+    const addItem = () => {
+        setCompareData([
+            ...compareData,
+            DEFAULT_COMPARE_DATA
+        ]);
+    };
 
+    const removeItem = (index) => {
+        setCompareData(compareData.filter((_, idx) => index !== idx));
+    };
 
-    //
-    // addItem = () => {
-    //     this.setState(({compareData}) => ({
-    //         [COMPARE_DATA]: [
-    //             ...compareData,
-    //             DEFAULT_COMPARE_DATA
-    //         ]
-    //     }));
-    // };
-    //
-    // removeItem = (index) => {
-    //     this.setState(({compareData}) => ({
-    //         [COMPARE_DATA]: compareData.filter((_, idx) => index !== idx)
-    //     }));
-    //
-    // };
-    //
-    const buildSnackbarsList = (data = []) => data.map(item => (
-        <Snackbar
-            key={item.key}
-            message={item.text}
-            autoHideDuration={3000}
-            open={[DISPLAY_SNACKBARS][item.key]}
-            anchorOrigin={SNACKBAR_POSITION}
-            // TODO [sf] 21.10.2019
-            onClose={(displaySnackBars) => setSnackbars({
-                [DISPLAY_SNACKBARS]: {
-                    ...displaySnackBars,
-                    [item.key]: false
-                }
-            })}
-        />
-    ));
+    const buildSnackbarsList = (data = []) => data.map(item => {
+        const {displaySnackBars: snacksData} = displaySnackBars;
+        return (
+            <Snackbar
+                key={item.key}
+                message={item.text}
+                autoHideDuration={3000}
+                open={snacksData[item.key]}
+                anchorOrigin={SNACKBAR_POSITION}
+                onClose={() => setSnackbars({
+                    [DISPLAY_SNACKBARS]: {
+                        ...snacksData,
+                        [item.key]: false
+                    }
+                })}
+            />
+        );
+    });
     const changeMeasureHandler = (measureKey) => {
         setMeasureKey(setMeasure(measureKey));
         toggleSidebar();
@@ -95,56 +75,47 @@ const AppClass = () => {
 
     const changeHandler = (event, index) => {
         const {target: {name, value}} = event;
-        setCompareData(({compareData}) => {
-            // https://stackoverflow.com/a/49502115
-            // shallow copies
-            const item = get(compareData, `[${index}]`, {});
-            return {
-                [COMPARE_DATA]: [
-                    ...compareData.slice(0, index),
-                    {
-                        ...item,
-                        [name]: value
-                    },
-                    ...compareData.slice(index + 1, compareData.length)
-                ]
-            }
-        })
+        const item = get(compareData, `[${index}]`, {});
+        const newData = [
+            ...compareData.slice(0, index),
+            {
+                ...item,
+                [name]: value
+            },
+            ...compareData.slice(index + 1, compareData.length)
+        ];
+        setCompareData(newData)
     };
-    //
-    // resetItem = (index) => {
-    //     this.setState(({compareData}) => ({
-    //         [COMPARE_DATA]: compareData.map((item, itemIndex) => index === itemIndex ? DEFAULT_COMPARE_DATA : item)
-    //     }))
-    // };
+
+    const resetItem = (index) => {
+        setCompareData(compareData
+            .map((item, itemIndex) => index === itemIndex
+                ? DEFAULT_COMPARE_DATA :
+                item)
+        );
+    };
 
     const toggleSidebar = () => {
         setSidebarVisible(!sidebarVisible);
     };
 
-    // setBestValue = () => {
-    //     const cData = processCompare(this.state[COMPARE_DATA], this.state.measure.standard);
-    //     this.setState({
-    //         [BEST_VALUES_INDEXES]: cData,
-    //         [DISPLAY_SNACKBARS]: {
-    //             [SNACKBAR_MINIMUM_TWO]: this.state[COMPARE_DATA].length === 1,
-    //             [SNACKBAR_NOT_FILLED_DATA]: cData.errors.length > 0
-    //         }
-    //     });
-    // };
+    const setBestValue = (prevData) => {
+        const cData = processCompare(compareData, measure.standard);
+        setBestIndexes(cData);
+        setSnackbars({
+            [DISPLAY_SNACKBARS]: {
+                [SNACKBAR_MINIMUM_TWO]: compareData.length === 1,
+                [SNACKBAR_NOT_FILLED_DATA]: cData.errors.length > 0
+            }
+        });
+    };
 
-    // componentDidUpdate(_, prevState) {
-    //     if (!isEqual(prevState[COMPARE_DATA], this.state[COMPARE_DATA])) {
-    //         // TODO [sf] 12.03.2019 use debounce https://stackoverflow.com/a/48046243/3042031
-    //         this.setState({
-    //             [BEST_VALUES_INDEXES]: DEFAULT_BEST_VALUES
-    //         })
-    //     }
-    // }
+    useEffect(() => {
+        if (bestValuesIndexes.errors.length) {
+            setBestIndexes(DEFAULT_BEST_VALUES);
+        }
+    }, [compareData]);
 
-    // render() {
-    //     const {compareData, measure} = this.state;
-    //     const {width} = this.props;
     return (
         <React.Fragment>
             <Header
@@ -168,29 +139,28 @@ const AppClass = () => {
 
                 {buildSnackbarsList(SNACKBARS_LIST)}
 
-                {/*<CompareButton*/}
-                {/*onSetBestValue={this.setBestValue}*/}
-                {/*itemsCount={compareData.length}*/}
-                {/*onAddItem={this.addItem}*/}
-                {/*/>*/}
-                {/*<div>{width}</div>*/}
+                <CompareButton
+                    onSetBestValue={setBestValue}
+                    itemsCount={compareData.length}
+                    onAddItem={addItem}
+                />
+                <div>{width}</div>
 
                 <PriceItem
-                compareData={compareData}
-                changeHandler={changeHandler}
-                allowDelete={compareData.length > 1}
-                // removeHandler={this.removeItem}
-                measureKey={measure.keyWord}
-                measure={measure}
-                // bestValues={this.state[BEST_VALUES_INDEXES]}
-                // standard={this.state.measure.standard}
-                // resetItemHandler={this.resetItem}
+                    compareData={compareData}
+                    changeHandler={changeHandler}
+                    allowDelete={compareData.length > 1}
+                    removeHandler={removeItem}
+                    measureKey={measure.keyWord}
+                    measure={measure}
+                    bestValues={bestValuesIndexes}
+                    standard={measure.standard}
+                    resetItemHandler={resetItem}
                 />
 
             </Container>
         </React.Fragment>
     );
-
 };
 
 export const App = withWidth()(AppClass);
