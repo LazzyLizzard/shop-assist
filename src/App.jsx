@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {get} from 'lodash';
 import {Container, Drawer, Snackbar, withWidth} from '@material-ui/core';
-import {DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA} from './constants/initial-values';
+import {AUTO_HIDE_DURATION, DEFAULT_BEST_VALUES, DEFAULT_COMPARE_DATA, DEFAULT_SNACKBARS} from './constants/initial-values';
 import {MEASURE_KEY_WEIGHT, MEASURES} from './constants/measures';
 import {
-    DISPLAY_SNACKBARS,
     SNACKBAR_MINIMUM_TWO,
     SNACKBAR_NOT_FILLED_DATA,
     SNACKBAR_POSITION,
     SNACKBARS_LIST
 } from './constants/field-names';
-import {CompareButton, Header, MeasuresList, PriceItem} from './components';
+import {TopButtonsBlock, Header, MeasuresList, PriceItem} from './components';
 import {processCompare} from './utils';
 
 const DEFAULT_MEASURE_KEY = MEASURE_KEY_WEIGHT;
@@ -32,12 +31,7 @@ const AppClass = ({width}) => {
     const [measure, setMeasureKey] = useState(setMeasure(DEFAULT_MEASURE_KEY));
     const [bestValuesIndexes, setBestIndexes] = useState(DEFAULT_BEST_VALUES);
     const [sidebarVisible, setSidebarVisible] = useState(false);
-    const [displaySnackBars, setSnackbars] = useState({
-        [DISPLAY_SNACKBARS]: {
-            [SNACKBAR_MINIMUM_TWO]: false,
-            [SNACKBAR_NOT_FILLED_DATA]: false
-        }
-    });
+    const [displaySnackBars, setSnackbars] = useState(DEFAULT_SNACKBARS);
 
     const addItem = () => {
         setCompareData([
@@ -47,27 +41,29 @@ const AppClass = ({width}) => {
     };
 
     const removeItem = (index) => {
-        setCompareData(compareData.filter((_, idx) => index !== idx));
+        setSnackbars(DEFAULT_SNACKBARS);
+        setTimeout(() => {
+            setCompareData(compareData.filter((_, idx) => index !== idx));
+        }, 500);
     };
 
-    const buildSnackbarsList = (data = []) => data.map(item => {
-        const {displaySnackBars: snacksData} = displaySnackBars;
-        return (
-            <Snackbar
-                key={item.key}
-                message={item.text}
-                autoHideDuration={3000}
-                open={snacksData[item.key]}
-                anchorOrigin={SNACKBAR_POSITION}
-                onClose={() => setSnackbars({
-                    [DISPLAY_SNACKBARS]: {
-                        ...snacksData,
-                        [item.key]: false
-                    }
-                })}
-            />
-        );
-    });
+    const buildSnackbarsList = (snackBars = [], errors = []) => snackBars.map(item => (
+        <Snackbar
+            key={item.key}
+            message={item.getErrorText
+                ? item.getErrorText(errors)
+                : item.text
+            }
+            autoHideDuration={AUTO_HIDE_DURATION}
+            open={displaySnackBars[item.key]}
+            anchorOrigin={SNACKBAR_POSITION}
+            onClose={() => setSnackbars({
+                ...displaySnackBars,
+                [item.key]: false
+            })}
+        />
+    ));
+
     const changeMeasureHandler = (measureKey) => {
         setMeasureKey(setMeasure(measureKey));
         toggleSidebar();
@@ -99,14 +95,12 @@ const AppClass = ({width}) => {
         setSidebarVisible(!sidebarVisible);
     };
 
-    const setBestValue = (prevData) => {
+    const setBestValue = () => {
         const cData = processCompare(compareData, measure.standard);
         setBestIndexes(cData);
         setSnackbars({
-            [DISPLAY_SNACKBARS]: {
-                [SNACKBAR_MINIMUM_TWO]: compareData.length === 1,
-                [SNACKBAR_NOT_FILLED_DATA]: cData.errors.length > 0
-            }
+            [SNACKBAR_MINIMUM_TWO]: compareData.length === 1,
+            [SNACKBAR_NOT_FILLED_DATA]: cData.errors.length > 0
         });
     };
 
@@ -137,11 +131,11 @@ const AppClass = ({width}) => {
             </Drawer>
             <Container maxWidth={false}>
 
-                {buildSnackbarsList(SNACKBARS_LIST)}
+                {buildSnackbarsList(SNACKBARS_LIST, get(bestValuesIndexes, 'errors', []))}
 
-                <CompareButton
-                    onSetBestValue={setBestValue}
+                <TopButtonsBlock
                     itemsCount={compareData.length}
+                    onSetBestValue={setBestValue}
                     onAddItem={addItem}
                 />
                 <div>{width}</div>
