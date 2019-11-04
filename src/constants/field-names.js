@@ -12,9 +12,7 @@ export const SNACKBARS_LIST = [
     },
     {
         key: SNACKBAR_NOT_FILLED_DATA,
-        getErrorText: (errors) => {
-            return `${errors.length} полей не заполнено`
-        }
+        getErrorText: (errors) => `${errors.length} полей не заполнено`
     }
 ];
 

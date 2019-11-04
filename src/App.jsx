@@ -12,8 +12,6 @@ import {
 import {TopButtonsBlock, Header, MeasuresList, PriceItem} from './components';
 import {processCompare} from './utils';
 
-const DEFAULT_MEASURE_KEY = MEASURE_KEY_WEIGHT;
-
 const setMeasure = (measureKey) => {
     const measureObject = MEASURES.find(object => object.key === measureKey);
     const measureItem = measureObject.items.find(item => get(item, 'default') === true);
@@ -28,7 +26,7 @@ const setMeasure = (measureKey) => {
 const AppClass = ({width}) => {
 
     const [compareData, setCompareData] = useState([DEFAULT_COMPARE_DATA]);
-    const [measure, setMeasureKey] = useState(setMeasure(DEFAULT_MEASURE_KEY));
+    const [measure, setMeasureKey] = useState(setMeasure(MEASURE_KEY_WEIGHT));
     const [bestValuesIndexes, setBestIndexes] = useState(DEFAULT_BEST_VALUES);
     const [sidebarVisible, setSidebarVisible] = useState(false);
     const [displaySnackBars, setSnackbars] = useState(DEFAULT_SNACKBARS);
@@ -38,13 +36,6 @@ const AppClass = ({width}) => {
             ...compareData,
             DEFAULT_COMPARE_DATA
         ]);
-    };
-
-    const removeItem = (index) => {
-        setSnackbars(DEFAULT_SNACKBARS);
-        setTimeout(() => {
-            setCompareData(compareData.filter((_, idx) => index !== idx));
-        }, 500);
     };
 
     const buildSnackbarsList = (snackBars = [], errors = []) => snackBars.map(item => (
@@ -83,12 +74,22 @@ const AppClass = ({width}) => {
         setCompareData(newData)
     };
 
+    const removeItem = (index) => {
+        setSnackbars(DEFAULT_SNACKBARS);
+        setTimeout(() => {
+            setCompareData(compareData.filter((_, idx) => index !== idx));
+        }, 500);
+    };
+
     const resetItem = (index) => {
-        setCompareData(compareData
-            .map((item, itemIndex) => index === itemIndex
-                ? DEFAULT_COMPARE_DATA :
-                item)
-        );
+        setSnackbars(DEFAULT_SNACKBARS);
+        setTimeout(() => {
+            setCompareData(compareData
+                .map((item, itemIndex) => index === itemIndex
+                    ? DEFAULT_COMPARE_DATA :
+                    item)
+            );
+        }, 500);
     };
 
     const toggleSidebar = () => {

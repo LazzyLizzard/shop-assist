@@ -3,10 +3,11 @@ import {get} from 'lodash';
 import {FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, TextField} from '@material-ui/core';
 import {amber, green} from '@material-ui/core/colors';
 
-import {Input} from '../../components';
-import {calculatePricePerStandardValue} from '../../utils';
+import {PRICE, QUANTITY} from '../../constants/field-names';
 import {MEASURES} from '../../constants/measures';
-import {ControlButtons} from "./control-buttons";
+import {Input, PriceItemErrors} from '../../components';
+import {ControlButtons} from './control-buttons';
+import {calculatePricePerStandardValue} from '../../utils';
 
 const reg = /^[1-9]\d*(\.\d+)?$/;
 // const reg = /^\d+$/;
@@ -75,12 +76,18 @@ export const PriceItem = ({
     // TODO [sf] 03.10.2019 fix adding class by @classNames
     return (
         compareData.map((item, index) => {
+            const {unit, price, quantity} = item;
             const pricePerStandard = calculatePricePerStandardValue({
-                unit: item.unit,
+                unit,
                 standard,
-                price: item.price,
-                quantity: item.quantity
+                price,
+                quantity
             });
+            const itemErrors = [
+                ...checkValue(item[QUANTITY]) ? [QUANTITY] : [],
+                ...checkValue(item[PRICE]) ? [PRICE] : []
+            ];
+
             return (
                 <Paper
                     className={[
@@ -103,11 +110,11 @@ export const PriceItem = ({
                             >
                                 <Grid item xs={4} md={4} sm={4}>
                                     <Input
-                                        error={checkValue(item.quantity)}
+                                        error={itemErrors.includes(QUANTITY)}
                                         placeholder="Количество"
                                         label="Количество"
-                                        name="quantity"
-                                        value={item.quantity}
+                                        name={QUANTITY}
+                                        value={item[QUANTITY]}
                                         index={index}
                                         changeHandler={changeHandler}
                                     />
@@ -128,11 +135,11 @@ export const PriceItem = ({
                                 </Grid>
                                 <Grid item xs={4} md={4} sm={4}>
                                     <Input
-                                        error={checkValue(item.price)}
+                                        error={itemErrors.includes(PRICE)}
                                         placeholder="price"
                                         label="Price"
-                                        name="price"
-                                        value={item.price}
+                                        name={PRICE}
+                                        value={item[PRICE]}
                                         index={index}
                                         changeHandler={changeHandler}
                                     />
@@ -147,6 +154,7 @@ export const PriceItem = ({
                             />
                         </Grid>
                     </Grid>
+                    <PriceItemErrors errors={itemErrors} />
                     <ControlButtons
                         allowDelete={allowDelete}
                         onRemove={() => removeHandler(index)}
