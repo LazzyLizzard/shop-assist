@@ -19,7 +19,7 @@ export const PriceItemErrors = ({errors = []}) => {
         ? (
             <Grid container className={classes.root}>
                 <Grid item>
-                    <Typography variant="body2" gutterBottom>
+                    <Typography variant="body2">
                         Поля с ошибками должны содержать только символы от 1 до 9 и ".", например 125 или 10.4
                     </Typography>
                 </Grid>
